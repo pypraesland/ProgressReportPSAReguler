@@ -1,12 +1,27 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Download, User, BarChart3, MessageSquare, RefreshCw, FileText, Printer, CheckCircle2, Sparkles, Loader2 } from 'lucide-react';
+import { 
+  Download, User, BarChart3, MessageSquare, 
+  RefreshCw, FileText, Printer, CheckCircle2, 
+  Sparkles, Loader2, Trash2, Github, Share2 
+} from 'lucide-react';
+
+/**
+ * YEC REPORT GENERATOR - TEAM VERSION
+ * * CARA PUBLIKASI DI GITHUB:
+ * 1. Buat repositori baru di GitHub.
+ * 2. Masukkan kode ini ke dalam file bernama 'App.jsx' (jika menggunakan Vite) 
+ * atau sesuaikan dengan boilerplate React Anda.
+ * 3. Masukkan API Key pada variabel 'apiKey' di bawah ini.
+ * 4. Deploy menggunakan GitHub Pages, Vercel, atau Netlify.
+ */
 
 const App = () => {
-  const apiKey = ""; // API Key disediakan oleh environment
+  // Masukkan Gemini API Key Anda di sini untuk penggunaan tim
+  const apiKey = ""; 
   
   const [formData, setFormData] = useState({
-    namaLengkap: 'Clarissa Amarullah Shidiq',
-    namaPanggilan: 'Clarissa',
+    namaLengkap: '',
+    namaPanggilan: '',
     skor: {
       artikulasi: 3,
       engagement: 3,
@@ -14,15 +29,15 @@ const App = () => {
       inklusivitas: 2,
       kecemasan: 3
     },
-    rawNotes: 'Clarissa sudah berani maju. Suara kadang pelan kadang keras (belum stabil). Sudah mulai ada gesture tangan. Tapi kalau diskusi grup masih sering diam/pasif. Perlu dilatih voice levelnya.',
-    nilaiAkhir: 70
+    rawNotes: '',
+    nilaiAkhir: ''
   });
 
   const [paragraphs, setParagraphs] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const reportRef = useRef(null);
 
-  // Load html2pdf script dynamically
+  // Memuat library html2pdf secara dinamis melalui CDN
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
@@ -47,7 +62,25 @@ const App = () => {
     }));
   };
 
+  const resetForm = () => {
+    if (confirm("Apakah Anda yakin ingin menghapus semua data input?")) {
+      setFormData({
+        namaLengkap: '',
+        namaPanggilan: '',
+        skor: { artikulasi: 1, engagement: 1, ekspresi: 1, inklusivitas: 1, kecemasan: 1 },
+        rawNotes: '',
+        nilaiAkhir: ''
+      });
+      setParagraphs([]);
+    }
+  };
+
   const generateReportWithAI = async () => {
+    if (!formData.rawNotes || !formData.namaPanggilan) {
+      alert("Harap isi Nama Panggilan dan Observasi Mentah terlebih dahulu.");
+      return;
+    }
+
     setIsGenerating(true);
     const systemPrompt = `
       Anda adalah seorang instruktur Public Speaking profesional di YEC.CO.ID.
@@ -55,32 +88,25 @@ const App = () => {
       
       KRITERIA PENULISAN:
       1. Terdiri dari MAKSIMAL 6 paragraf.
-      2. Bahasa: Indonesia, Formal, Profesional, Tajam, Kritis, Analitis, namun tetap Soft-Spoken (manusiawi).
-      3. JANGAN mengglorifikasi atau berlebihan.
+      2. Bahasa: Indonesia, Formal, Profesional, Tajam, Kritis, Analitis, namun tetap Soft-Spoken.
+      3. JANGAN mengglorifikasi atau berlebihan. Gunakan analisis berbasis data.
       4. Setiap paragraf harus mengaitkan aspek penilaian dengan indikator teknis.
-      5. Sertakan contoh konkret atau analisis detail.
-      6. Paragraf terakhir harus berisi Kesimpulan dan Rekomendasi.
+      5. Sertakan contoh konkret atau analisis detail berdasarkan catatan instruktur.
+      6. Paragraf terakhir harus berisi Kesimpulan dan Rekomendasi strategis.
       7. Gunakan nama panggilan saja (${formData.namaPanggilan}) tanpa embel-embel 'Ananda'.
       
-      PENONJOLAN TEKS (PENTING):
-      Identifikasi kata kunci atau frasa penting dan bungkus dengan tag HTML berikut:
-      - <strong>Teks</strong> untuk cetak tebal.
-      - <span class="hl-blue">Teks</span> untuk informasi progres/netral (biru).
-      - <span class="hl-green">Teks</span> untuk kelebihan/aspek positif (hijau).
-      - <span class="hl-red">Teks</span> untuk kelemahan/masalah kritis (merah).
-      - <span class="hl-yellow">Teks</span> untuk perhatian khusus/rekomendasi (kuning).
+      PENONJOLAN TEKS:
+      Bungkus frasa penting dengan tag HTML:
+      - <strong>Teks</strong> untuk tebal.
+      - <span class="hl-blue">Teks</span> untuk progres/netral.
+      - <span class="hl-green">Teks</span> untuk kelebihan.
+      - <span class="hl-red">Teks</span> untuk area pengembangan kritis.
+      - <span class="hl-yellow">Teks</span> untuk rekomendasi penting.
       
-      ASPEK & SKOR (1-4):
-      - Artikulasi & Proyeksi: ${formData.skor.artikulasi}
-      - Interaction & Engagement: ${formData.skor.engagement}
-      - Ekspresi & Penguasaan Ruang: ${formData.skor.ekspresi}
-      - Inklusivitas & Kontrol Kelompok: ${formData.skor.inklusivitas}
-      - Manajemen Kecemasan: ${formData.skor.kecemasan}
+      ASPEK: Artikulasi(${formData.skor.artikulasi}), Interaction(${formData.skor.engagement}), Ekspresi(${formData.skor.ekspresi}), Inklusivitas(${formData.skor.inklusivitas}), Kecemasan(${formData.skor.kecemasan}).
+      DATA MENTAH: "${formData.rawNotes}"
       
-      CATATAN MENTAH DARI INSTRUKTUR:
-      "${formData.rawNotes}"
-      
-      Output harus dalam format JSON: { "paragraphs": ["teks dengan tag HTML", "teks dengan tag HTML", ...] }
+      Output JSON: { "paragraphs": ["isi paragraf 1", "isi paragraf 2", ...] }
     `;
 
     let retries = 0;
@@ -92,7 +118,7 @@ const App = () => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: "Gunakan instruksi sistem untuk membuat laporan." }] }],
+            contents: [{ parts: [{ text: "Proses laporan sesuai instruksi sistem." }] }],
             systemInstruction: { parts: [{ text: systemPrompt }] },
             generationConfig: { responseMimeType: "application/json" }
           })
@@ -108,7 +134,7 @@ const App = () => {
           await new Promise(res => setTimeout(res, Math.pow(2, retries) * 1000));
           return attemptFetch();
         }
-        alert("Gagal mengelaborasi catatan. Silakan coba lagi.");
+        alert("Gagal memproses data. Pastikan API Key sudah benar.");
       }
     };
 
@@ -116,19 +142,15 @@ const App = () => {
     setIsGenerating(false);
   };
 
-  useEffect(() => {
-    generateReportWithAI();
-  }, []);
-
   const downloadPDF = () => {
     if (!window.html2pdf) {
-      alert("Sistem PDF sedang dimuat...");
+      alert("Library PDF belum siap, silakan tunggu atau refresh halaman.");
       return;
     }
     const element = reportRef.current;
     const opt = {
       margin: 0,
-      filename: `Report_${formData.namaPanggilan}_YEC.pdf`,
+      filename: `Report_YEC_${formData.namaPanggilan || 'Siswa'}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true },
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
@@ -137,56 +159,73 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans text-slate-900">
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans text-slate-900">
       <style>{`
         .hl-blue { background-color: #dbeafe; color: #1e40af; padding: 0 4px; border-radius: 4px; font-weight: 600; }
         .hl-red { background-color: #fee2e2; color: #991b1b; padding: 0 4px; border-radius: 4px; font-weight: 600; }
         .hl-green { background-color: #dcfce7; color: #166534; padding: 0 4px; border-radius: 4px; font-weight: 600; }
         .hl-yellow { background-color: #fef9c3; color: #854d0e; padding: 0 4px; border-radius: 4px; font-weight: 600; }
-        strong { font-weight: 700; color: #1e293b; }
+        strong { font-weight: 700; color: #0f172a; }
+        @media print { .no-print { display: none; } }
       `}</style>
       
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
         
-        {/* PANEL INPUT */}
+        {/* PANEL KONTROL & INPUT */}
         <div className="lg:w-1/3 space-y-6 no-print">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2 text-blue-900 font-bold">
+              <Github size={20} />
+              <span>YEC Team Dashboard</span>
+            </div>
+            <button onClick={resetForm} className="text-slate-400 hover:text-red-500 transition-colors">
+              <Trash2 size={18} />
+            </button>
+          </div>
+
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-blue-900 border-b pb-2">
-              <User size={20} /> Profil Peserta
+            <h2 className="text-lg font-bold flex items-center gap-2 mb-6 text-slate-800">
+              <User size={18} className="text-blue-500" /> Identitas Peserta
             </h2>
             <div className="space-y-4">
-              <input 
-                placeholder="Nama Lengkap"
-                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-                name="namaLengkap" value={formData.namaLengkap} onChange={handleInputChange}
-              />
-              <input 
-                placeholder="Nama Panggilan"
-                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-                name="namaPanggilan" value={formData.namaPanggilan} onChange={handleInputChange}
-              />
-              <input 
-                type="number" placeholder="Nilai Akhir (0-100)"
-                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-                name="nilaiAkhir" value={formData.nilaiAkhir} onChange={handleInputChange}
-              />
+              <div className="group">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nama Lengkap</label>
+                <input 
+                  className="w-full mt-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  name="namaLengkap" value={formData.namaLengkap} onChange={handleInputChange} placeholder="Masukkan nama lengkap..."
+                />
+              </div>
+              <div className="group">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nama Panggilan</label>
+                <input 
+                  className="w-full mt-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  name="namaPanggilan" value={formData.namaPanggilan} onChange={handleInputChange} placeholder="Nama untuk di laporan..."
+                />
+              </div>
+              <div className="group">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Skor Akhir (0-100)</label>
+                <input 
+                  type="number" className="w-full mt-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  name="nilaiAkhir" value={formData.nilaiAkhir} onChange={handleInputChange} placeholder="Contoh: 85"
+                />
+              </div>
             </div>
           </div>
 
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-blue-900 border-b pb-2">
-              <BarChart3 size={20} /> Skor Aspek (1-4)
+            <h2 className="text-lg font-bold flex items-center gap-2 mb-6 text-slate-800">
+              <BarChart3 size={18} className="text-blue-500" /> Matriks Penilaian
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-5">
               {Object.keys(formData.skor).map(key => (
                 <div key={key} className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-500 uppercase">{key}</label>
-                  <div className="flex gap-1">
+                  <label className="text-xs font-semibold text-slate-500 capitalize">{key}</label>
+                  <div className="flex gap-1.5">
                     {[1, 2, 3, 4].map(n => (
                       <button
                         key={n}
                         onClick={() => handleSkorChange(key, n)}
-                        className={`w-8 h-8 rounded-md text-xs font-bold transition ${formData.skor[key] === n ? 'bg-blue-600 text-white shadow-md' : 'bg-slate-100 text-slate-400'}`}
+                        className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${formData.skor[key] === n ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-110' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'}`}
                       >
                         {n}
                       </button>
@@ -198,12 +237,12 @@ const App = () => {
           </div>
 
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-blue-900 border-b pb-2">
-              <MessageSquare size={20} /> Observasi Mentah
+            <h2 className="text-lg font-bold flex items-center gap-2 mb-4 text-slate-800">
+              <MessageSquare size={18} className="text-blue-500" /> Observasi Instruktur
             </h2>
             <textarea 
-              className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500 h-40 resize-none"
-              placeholder="Tulis poin-poin singkat di sini..."
+              className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-blue-500 h-44 resize-none leading-relaxed transition-all"
+              placeholder="Contoh: Artikulasi jelas tapi volume tidak stabil. Sangat berani saat maju tapi dalam diskusi kelompok masih pasif..."
               value={formData.rawNotes} 
               onChange={(e) => setFormData({...formData, rawNotes: e.target.value})}
             />
@@ -211,51 +250,63 @@ const App = () => {
             <button 
               onClick={generateReportWithAI}
               disabled={isGenerating}
-              className="w-full mt-6 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-lg"
+              className="w-full mt-6 bg-slate-900 hover:bg-black disabled:bg-slate-300 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-xl transform active:scale-95"
             >
-              {isGenerating ? <Loader2 className="animate-spin" size={20} /> : <Sparkles size={20} />}
-              {isGenerating ? "Menganalisis..." : "Elaborasi Otomatis"}
+              {isGenerating ? <Loader2 className="animate-spin" size={20} /> : <Sparkles size={20} className="text-blue-400" />}
+              {isGenerating ? "Sedang Mengolah..." : "Buat Elaborasi Laporan"}
             </button>
           </div>
         </div>
 
-        {/* PANEL PREVIEW */}
-        <div className="flex-1 bg-white rounded-3xl overflow-hidden shadow-2xl min-h-[1100px] border border-slate-200 relative">
+        {/* PRATINJAU LAPORAN */}
+        <div className="flex-1 bg-white rounded-[2.5rem] overflow-hidden shadow-2xl min-h-[1150px] border border-slate-200 relative">
           
-          <div className="absolute top-6 right-6 z-50 no-print flex gap-2">
-             <button onClick={downloadPDF} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-full shadow-lg transition flex items-center gap-2 font-bold text-sm">
-                <Download size={18} /> Unduh PDF
+          <div className="absolute top-8 right-8 z-50 no-print flex gap-3">
+             <button onClick={() => window.print()} className="bg-white text-slate-700 p-3 rounded-2xl shadow-lg hover:bg-slate-50 transition-all border border-slate-100">
+                <Printer size={20} />
+             </button>
+             <button onClick={downloadPDF} className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl shadow-xl transition-all flex items-center gap-2 font-bold text-sm transform hover:-translate-y-1">
+                <Download size={20} /> Simpan PDF
              </button>
           </div>
 
           <div ref={reportRef} className="relative bg-white min-h-full">
-            {/* Watermark */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden flex flex-col justify-around items-center opacity-[0.03] z-0">
-               {[1,2,3,4,5].map(i => <div key={i} className="text-[9rem] font-black -rotate-[35deg] whitespace-nowrap">YEC.CO.ID</div>)}
+            {/* Watermark Dinamis */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden flex flex-col justify-around items-center opacity-[0.03] z-0 select-none">
+               {[1,2,3,4,5,6].map(i => <div key={i} className="text-[10rem] font-black -rotate-[35deg] whitespace-nowrap tracking-tighter">YEC.CO.ID</div>)}
             </div>
 
             <div className="relative z-10">
-              <div className="bg-gradient-to-br from-[#1e3a8a] to-[#3b82f6] p-16 text-center text-white">
-                <h1 className="text-4xl md:text-5xl font-serif font-bold mb-3">Monthly Observation Report</h1>
-                <div className="inline-block px-4 py-1 bg-white/20 rounded-full tracking-[0.2em] uppercase text-xs font-semibold text-blue-50">
-                  Public Speaking Anak Reguler
+              {/* Desain Header */}
+              <div className="bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#3b82f6] p-20 text-center text-white relative">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -mr-48 -mt-48 blur-3xl"></div>
+                <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4 tracking-tight">Monthly Observation Report</h1>
+                <div className="inline-flex items-center gap-3 px-6 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
+                  <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                  <span className="tracking-[0.25em] uppercase text-[10px] font-bold text-blue-100">Public Speaking Anak Reguler</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 p-10 bg-slate-50 border-b border-slate-100">
-                <div className="border-r border-slate-200 pr-4">
-                  <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1">Nama Lengkap</p>
-                  <p className="text-2xl font-bold text-slate-800 leading-tight">{formData.namaLengkap}</p>
+              {/* Data Identitas */}
+              <div className="grid grid-cols-2 p-12 bg-slate-50/80 border-b border-slate-100 backdrop-blur-sm">
+                <div className="border-r border-slate-200">
+                  <p className="text-[9px] text-slate-400 uppercase font-black tracking-[0.2em] mb-2">Nama Lengkap Peserta</p>
+                  <p className="text-2xl font-bold text-slate-800 leading-none">{formData.namaLengkap || "—"}</p>
                 </div>
-                <div className="pl-10">
-                  <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1">Nama Panggilan</p>
-                  <p className="text-2xl font-bold text-blue-700 leading-tight">{formData.namaPanggilan}</p>
+                <div className="pl-12">
+                  <p className="text-[9px] text-slate-400 uppercase font-black tracking-[0.2em] mb-2">Nama Panggilan</p>
+                  <p className="text-2xl font-bold text-blue-700 leading-none">{formData.namaPanggilan || "—"}</p>
                 </div>
               </div>
 
-              <div className="p-10">
-                <h2 className="font-serif text-2xl font-bold text-slate-800 mb-8 border-l-4 border-blue-600 pl-4">Rincian Capaian Aspek</h2>
-                <div className="grid grid-cols-1 gap-6">
+              {/* Konten Penilaian */}
+              <div className="p-12">
+                <div className="flex items-center gap-4 mb-10">
+                  <div className="h-10 w-1.5 bg-blue-600 rounded-full"></div>
+                  <h2 className="font-serif text-2xl font-bold text-slate-800">Matriks Capaian Kompetensi</h2>
+                </div>
+
+                <div className="grid grid-cols-1 gap-7">
                   {Object.entries({
                     "Artikulasi & Proyeksi Suara": formData.skor.artikulasi,
                     "Interaksi & Respons (Engagement)": formData.skor.engagement,
@@ -263,14 +314,14 @@ const App = () => {
                     "Inklusivitas & Kontrol Kelompok": formData.skor.inklusivitas,
                     "Manajemen Kecemasan": formData.skor.kecemasan,
                   }).map(([label, val]) => (
-                    <div key={label}>
-                      <div className="flex justify-between mb-1 items-end">
-                        <span className="text-xs font-bold text-slate-500 uppercase tracking-tighter">{label}</span>
-                        <span className="text-xs font-black bg-slate-100 px-2 rounded border border-slate-200">{val} / 4</span>
+                    <div key={label} className="group">
+                      <div className="flex justify-between mb-2 items-end">
+                        <span className="text-xs font-bold text-slate-500 uppercase tracking-tighter group-hover:text-blue-600 transition-colors">{label}</span>
+                        <span className="text-xs font-black bg-white border border-slate-200 px-3 py-1 rounded-lg shadow-sm">{val} <span className="text-slate-300">/ 4</span></span>
                       </div>
-                      <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-100">
+                      <div className="w-full bg-slate-100 rounded-full h-3 border border-slate-100 p-0.5 overflow-hidden">
                         <div 
-                          className={`h-full transition-all duration-1000 ${val === 4 ? 'bg-emerald-500' : val === 3 ? 'bg-blue-500' : val === 2 ? 'bg-yellow-500' : 'bg-red-500'}`} 
+                          className={`h-full rounded-full transition-all duration-1000 ease-out ${val === 4 ? 'bg-emerald-500' : val === 3 ? 'bg-blue-500' : val === 2 ? 'bg-yellow-500' : 'bg-red-500'}`} 
                           style={{ width: `${(val/4)*100}%` }}
                         ></div>
                       </div>
@@ -278,47 +329,62 @@ const App = () => {
                   ))}
                 </div>
 
-                <div className="mt-12 bg-blue-50/50 p-8 rounded-3xl flex items-center justify-between border border-blue-100">
-                  <span className="text-blue-900 font-bold text-xl uppercase italic">Nilai Akhir Bulan Ini</span>
+                <div className="mt-14 bg-gradient-to-r from-blue-50 to-indigo-50 p-10 rounded-[2rem] flex items-center justify-between border border-blue-100 shadow-inner">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Akumulasi Skor Bulanan</p>
+                    <span className="text-blue-900 font-bold text-2xl uppercase italic tracking-tight">Evaluasi Akhir Sesi</span>
+                  </div>
                   <div className="text-right">
-                    <span className="text-6xl font-black text-blue-900 tracking-tighter">{formData.nilaiAkhir}<span className="text-2xl font-light text-blue-400 ml-1">/100</span></span>
+                    <span className="text-7xl font-black text-blue-900 tracking-tighter">{formData.nilaiAkhir || "0"}<span className="text-2xl font-light text-blue-300 ml-2">/100</span></span>
                   </div>
                 </div>
               </div>
 
-              <div className="p-10 bg-white border-t border-slate-100">
-                <h2 className="font-serif text-2xl font-bold text-slate-800 mb-8 border-l-4 border-blue-600 pl-4">Catatan Penilaian & Analisis</h2>
+              {/* Elaborasi Narasi AI */}
+              <div className="p-12 bg-white border-t border-slate-100">
+                <div className="flex items-center gap-4 mb-10">
+                  <div className="h-10 w-1.5 bg-blue-600 rounded-full"></div>
+                  <h2 className="font-serif text-2xl font-bold text-slate-800">Analisis Kualitatif & Rekomendasi</h2>
+                </div>
                 
                 {isGenerating ? (
-                  <div className="flex flex-col items-center justify-center py-24 text-slate-400 animate-pulse">
-                    <Sparkles size={48} className="mb-4 text-blue-200" />
-                    <p className="text-sm font-medium">Sistem sedang merangkai narasi laporan...</p>
+                  <div className="flex flex-col items-center justify-center py-32 text-slate-300 animate-pulse">
+                    <Sparkles size={60} className="mb-6 opacity-20" />
+                    <p className="text-sm font-bold tracking-widest uppercase">Menganalisis Data Observasi...</p>
                   </div>
                 ) : (
-                  <div className="space-y-8 text-slate-600 text-[15px] leading-[1.9] text-justify font-light">
-                    {paragraphs.map((para, idx) => (
-                      <p key={idx} className="relative pl-6 before:content-[''] before:absolute before:left-0 before:top-3 before:w-1.5 before:h-1.5 before:bg-blue-300 before:rounded-full" 
+                  <div className="space-y-10 text-slate-600 text-[15.5px] leading-[1.95] text-justify font-light">
+                    {paragraphs.length > 0 ? paragraphs.map((para, idx) => (
+                      <p key={idx} className="relative pl-8 before:content-[''] before:absolute before:left-0 before:top-3.5 before:w-2 before:h-2 before:bg-blue-200 before:rounded-full" 
                          dangerouslySetInnerHTML={{ __html: para }} 
                       />
-                    ))}
+                    )) : (
+                      <div className="py-20 text-center border-2 border-dashed border-slate-100 rounded-[2rem]">
+                        <p className="italic text-slate-400">Belum ada narasi. Silakan masukkan catatan instruktur dan tekan tombol 'Buat Elaborasi'.</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
-              <div className="p-16 bg-slate-50 border-t border-slate-100 flex flex-col md:flex-row justify-between items-end gap-8">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-blue-600">
-                    <CheckCircle2 size={16} />
-                    <span className="text-[10px] font-bold uppercase tracking-widest">Verified Academic Report</span>
+              {/* Tanda Tangan & Footer */}
+              <div className="p-20 bg-slate-50 border-t border-slate-100 flex flex-col md:flex-row justify-between items-end gap-12">
+                <div className="space-y-5">
+                  <div className="flex items-center gap-3 text-blue-600 bg-white px-4 py-2 rounded-2xl shadow-sm inline-flex">
+                    <CheckCircle2 size={18} />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Verified Academic Report</span>
                   </div>
-                  <p className="text-[11px] text-slate-400 italic max-w-xs leading-relaxed">
-                    Laporan ini disusun secara profesional oleh tim instruktur YEC.CO.ID untuk memantau perkembangan kompetensi komunikasi anak.
+                  <p className="text-[11px] text-slate-400 italic max-w-sm leading-relaxed">
+                    Dokumen ini dihasilkan secara otomatis melalui sistem evaluasi instruktur YEC.CO.ID untuk mendukung transparansi perkembangan bakat komunikasi anak.
                   </p>
                 </div>
-                <div className="text-center">
-                  <div className="w-48 h-px bg-slate-300 mb-3 mx-auto"></div>
-                  <p className="text-xs font-black text-slate-700 uppercase tracking-widest">Instruktur Public Speaking</p>
-                  <p className="text-[10px] text-slate-400 mt-1">YEC.CO.ID Professional Education</p>
+                <div className="text-center group min-w-[220px]">
+                  <div className="mb-6 h-12 flex items-center justify-center opacity-10 group-hover:opacity-100 transition-opacity">
+                    <span className="font-serif text-slate-400 text-sm">Digital Signature Attached</span>
+                  </div>
+                  <div className="w-full h-px bg-slate-300 mb-4"></div>
+                  <p className="text-[11px] font-black text-slate-700 uppercase tracking-[0.25em]">Instruktur Public Speaking</p>
+                  <p className="text-[9px] text-slate-400 mt-2 font-bold">YEC.CO.ID PROFESSIONAL EDUCATION</p>
                 </div>
               </div>
             </div>
