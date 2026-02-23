@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YEC Report Generator - Offline Version</title>
+    <title>YEC Report Generator - Smart Offline Version</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -21,7 +21,6 @@
         strong { font-weight: 700; color: #0f172a; }
         @media print { .no-print { display: none !important; } }
         
-        /* Custom scrollbar */
         textarea::-webkit-scrollbar { width: 6px; }
         textarea::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
     </style>
@@ -35,7 +34,7 @@
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2 text-blue-900 font-bold">
                     <i data-lucide="shield-check" class="w-5 h-5"></i>
-                    <span>YEC Offline Dashboard</span>
+                    <span>YEC Smart Offline Dashboard</span>
                 </div>
                 <button onclick="resetForm()" class="text-slate-400 hover:text-red-500 transition-colors">
                     <i data-lucide="trash-2" class="w-5 h-5"></i>
@@ -68,21 +67,20 @@
                 <h2 class="text-lg font-bold flex items-center gap-2 mb-6 text-slate-800">
                     <i data-lucide="bar-chart-3" class="text-blue-500 w-[18px] h-[18px]"></i> Matriks Penilaian
                 </h2>
-                <div id="skor-container" class="space-y-5">
-                    <!-- Penilaian akan di-render via JS agar lebih bersih -->
-                </div>
+                <div id="skor-container" class="space-y-5"></div>
             </div>
 
             <!-- Observasi Mentah -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold flex items-center gap-2 mb-4 text-slate-800">
+                <h2 class="text-lg font-bold flex items-center gap-2 mb-2 text-slate-800">
                     <i data-lucide="message-square" class="text-blue-500 w-[18px] h-[18px]"></i> Observasi Instruktur
                 </h2>
-                <textarea id="rawNotes" class="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-blue-500 h-44 resize-none leading-relaxed transition-all" placeholder="Tuliskan poin observasi di sini..."></textarea>
+                <p class="text-[10px] text-slate-400 mb-4 italic leading-tight">Masukkan detail perilaku (misal: "suara pelan", "kontak mata kurang", "aktif tanya"). Sistem akan mengolahnya secara analitis.</p>
+                <textarea id="rawNotes" class="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-blue-500 h-44 resize-none leading-relaxed transition-all" placeholder="Tuliskan poin observasi mendalam di sini..."></textarea>
                 
-                <button onclick="generateLocalReport()" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-xl transform active:scale-95">
-                    <i data-lucide="cpu" class="w-5 h-5"></i>
-                    <span>Proses Laporan Instan</span>
+                <button onclick="generateSmartLocalReport()" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-xl transform active:scale-95">
+                    <i data-lucide="brain" class="w-5 h-5"></i>
+                    <span>Elaborasi Analitis (Offline)</span>
                 </button>
             </div>
         </div>
@@ -101,11 +99,10 @@
 
             <div id="report-content" class="relative bg-white min-h-full">
                 <!-- Watermark -->
-                <div class="absolute inset-0 pointer-events-none overflow-hidden flex flex-col justify-around items-center opacity-[0.03] z-0 select-none">
-                    <div class="text-[10rem] font-black -rotate-[35deg] whitespace-nowrap tracking-tighter">YEC.CO.ID</div>
-                    <div class="text-[10rem] font-black -rotate-[35deg] whitespace-nowrap tracking-tighter">YEC.CO.ID</div>
-                    <div class="text-[10rem] font-black -rotate-[35deg] whitespace-nowrap tracking-tighter">YEC.CO.ID</div>
-                    <div class="text-[10rem] font-black -rotate-[35deg] whitespace-nowrap tracking-tighter">YEC.CO.ID</div>
+                <div class="absolute inset-0 pointer-events-none overflow-hidden flex flex-col justify-around items-center opacity-[0.02] z-0 select-none">
+                    <div class="text-[12rem] font-black -rotate-[35deg] whitespace-nowrap">YEC.CO.ID</div>
+                    <div class="text-[12rem] font-black -rotate-[35deg] whitespace-nowrap">YEC.CO.ID</div>
+                    <div class="text-[12rem] font-black -rotate-[35deg] whitespace-nowrap">YEC.CO.ID</div>
                 </div>
 
                 <div class="relative z-10">
@@ -152,7 +149,7 @@
                         </div>
                         <div id="ai-content" class="space-y-10 text-slate-600 text-[15.5px] leading-[1.95] text-justify font-light">
                             <div class="py-20 text-center border-2 border-dashed border-slate-100 rounded-[2rem]">
-                                <p class="italic text-slate-400">Belum ada narasi. Silakan isi data dan tekan tombol 'Proses Laporan Instan'.</p>
+                                <p class="italic text-slate-400">Belum ada narasi. Silakan isi data dan tekan tombol 'Elaborasi Analitis'.</p>
                             </div>
                         </div>
                     </div>
@@ -180,7 +177,7 @@
     </div>
 
     <script>
-        // --- DATA & TEMPLATES ---
+        // --- DATA & CONFIG ---
         let state = {
             namaLengkap: '', namaPanggilan: '', nilaiAkhir: '', rawNotes: '',
             skor: { artikulasi: 3, engagement: 3, ekspresi: 3, inklusivitas: 2, kecemasan: 3 }
@@ -194,7 +191,7 @@
             kecemasan: "Manajemen Kecemasan"
         };
 
-        // --- CORE FUNCTIONS ---
+        // --- CORE UI FUNCTIONS ---
         function renderInputs() {
             const container = document.getElementById('skor-container');
             container.innerHTML = Object.keys(state.skor).map(key => `
@@ -238,7 +235,7 @@
                             <span class="text-xs font-bold text-slate-500 uppercase tracking-tighter">${labels[key]}</span>
                             <span class="text-xs font-black bg-white border border-slate-200 px-3 py-1 rounded-lg shadow-sm">${val} / 4</span>
                         </div>
-                        <div class="w-full bg-slate-100 rounded-full h-3 p-0.5 overflow-hidden">
+                        <div class="w-full bg-slate-100 rounded-full h-3 p-0.5 overflow-hidden border border-slate-100">
                             <div class="h-full rounded-full transition-all duration-700 ${colorClass}" style="width: ${percentage}%"></div>
                         </div>
                     </div>
@@ -246,24 +243,18 @@
             }).join('');
         }
 
-        // --- LOCAL GENERATOR ENGINE ---
-        function generateLocalReport() {
+        // --- SMART LOCAL GENERATOR ENGINE ---
+        function generateSmartLocalReport() {
             const name = state.namaPanggilan || "Siswa";
-            const raw = state.rawNotes;
+            const raw = state.rawNotes.toLowerCase();
 
             const paragraphs = [
-                // Para 1: Kecemasan & Mental
-                renderP1(name, state.skor.kecemasan),
-                // Para 2: Artikulasi
-                renderP2(name, state.skor.artikulasi),
-                // Para 3: Engagement
-                renderP3(name, state.skor.engagement),
-                // Para 4: Ekspresi
-                renderP4(name, state.skor.ekspresi),
-                // Para 5: Inklusivitas
-                renderP5(name, state.skor.inklusivitas),
-                // Para 6: Kesimpulan
-                renderP6(name, state.skor, raw)
+                analyzeP1_Anxiety(name, state.skor.kecemasan, raw),
+                analyzeP2_Vocal(name, state.skor.artikulasi, raw),
+                analyzeP3_Interaction(name, state.skor.engagement, raw),
+                analyzeP4_BodyLanguage(name, state.skor.ekspresi, raw),
+                analyzeP5_Social(name, state.skor.inklusivitas, raw),
+                analyzeP6_Conclusion(name, state.skor, raw)
             ];
 
             const container = document.getElementById('ai-content');
@@ -272,49 +263,108 @@
             `).join('');
         }
 
-        function renderP1(n, s) {
-            if (s >= 4) return `Selama periode ini, ${n} menunjukkan <span class="hl-green">ketenangan yang sangat matang</span> saat menjadi pusat perhatian. Ia mampu tampil mandiri tanpa adanya indikasi kegelisahan fisik (fidgeting), yang menandakan bahwa ${n} memiliki pondasi mental yang kuat untuk terus berkembang di lingkungan baru.`;
-            if (s >= 3) return `Dalam aspek manajemen kecemasan, ${n} terlihat <span class="hl-blue">cukup tenang dan percaya diri</span>. Meskipun terkadang muncul sedikit keraguan, ia tetap berani melanjutkan pembicaraan secara mandiri, yang menunjukkan resiliensi mental yang baik di depan audiens.`;
-            return `Terkait manajemen kecemasan, ${n} masih menunjukkan <span class="hl-red">beberapa indikasi kegelisahan</span> saat tampil. Diperlukan latihan pernapasan lebih lanjut agar ketenangan dapat terjaga secara konsisten, terutama saat ${n} menghadapi tantangan atau materi baru yang lebih kompleks.`;
+        // --- PARAGRAPH ANALYSIS LOGIC ---
+
+        function analyzeP1_Anxiety(n, s, raw) {
+            let base = "";
+            let context = "";
+
+            if (s >= 4) base = `Mengenai aspek manajemen kecemasan, ${n} menunjukkan <span class="hl-green">stabilitas emosional yang sangat mengagumkan</span>. Ia mampu mengontrol diri dengan tenang saat menjadi pusat perhatian utama di kelas.`;
+            else if (s >= 3) base = `Dalam hal kontrol emosi, ${n} terlihat <span class="hl-blue">cukup tenang dan terkendali</span>. Keberaniannya untuk tampil mandiri di depan publik menunjukkan pondasi kepercayaan diri yang mulai terbentuk secara alami.`;
+            else base = `Terkait aspek ketenangan, ${n} tampak <span class="hl-red">masih menunjukkan tanda-tanda kecemasan</span>. Hal ini seringkali memicu kegelisahan fisik ringan yang secara tidak langsung mengganggu fokus audiens terhadap pesan yang disampaikan.`;
+
+            if (raw.includes("fidgeting") || raw.includes("gelisah")) context = ` Kami mengamati adanya sedikit tantangan saat ${n} berusaha menjaga fokusnya tetap stabil, terutama ketika menghadapi transisi materi yang menantang.`;
+            if (raw.includes("tenang") || raw.includes("percaya diri")) context = ` Kemandiriannya terlihat jelas dari caranya berdiri dan kesiapannya merespons situasi panggung tanpa memerlukan bantuan instruktur.`;
+
+            return base + context;
         }
 
-        function renderP2(n, s) {
-            if (s >= 4) return `Pada dimensi Artikulasi & Proyeksi Suara, ${n} berhasil mencapai <span class="hl-green">kejelasan vokal yang optimal</span>. Suaranya mampu menjangkau jarak ideal 2-3 meter dengan artikulasi yang sangat presisi, sehingga pesan yang disampaikan terdengar tegas dan mudah dipahami oleh seluruh audiens.`;
-            if (s >= 3) return `Kualitas vokal ${n} secara umum <span class="hl-blue">sudah cukup jelas dan stabil</span>. Meskipun proyeksi suaranya sudah mencapai standar minimal, ${n} perlu lebih berani dalam memberikan penekanan (power) pada kata-kata kunci agar pesan yang disampaikan memiliki daya pengaruh yang lebih kuat.`;
-            return `Dalam aspek vokal, ${n} masih mengalami <span class="hl-red">ketidakkonsistenan pada volume suara</span>. Artikulasi yang dihasilkan terkadang kurang tegas, sehingga diperlukan latihan otot bicara agar proyeksi suaranya dapat menjangkau seluruh ruangan dengan lebih merata.`;
+        function analyzeP2_Vocal(n, s, raw) {
+            let base = "";
+            let context = "";
+
+            if (s >= 4) base = `Pada aspek Artikulasi dan Proyeksi Suara, ${n} berhasil mencapai <span class="hl-green">kejelasan vokal yang sangat tajam</span>. Setiap kata yang diucapkan memiliki bobot dan intonasi yang pas, menjangkau jarak ideal 3 meter dengan sangat efektif.`;
+            else if (s >= 3) base = `Kualitas vokal ${n} secara keseluruhan <span class="hl-blue">sudah cukup baik dan jelas</span>. Meskipun volume suaranya stabil, masih terdapat ruang untuk melakukan eksplorasi pada penekanan kata (power) agar pesan terasa lebih otoritatif.`;
+            else base = `Kami mengidentifikasi adanya <span class="hl-red">ketidakstabilan pada proyeksi vokal</span> ${n}. Seringkali volume suara menurun di tengah kalimat, yang berisiko membuat pesan utama menjadi kurang tersampaikan dengan tegas kepada audiens.`;
+
+            if (raw.includes("suara pelan") || raw.includes("bisik")) context = ` Secara khusus, ${n} perlu melatih teknik pernapasan diafragma agar volume suaranya tidak menghilang saat ia berbicara dalam durasi yang lebih panjang.`;
+            if (raw.includes("artikulasi") || raw.includes("jelas")) context = ` Ketajaman pelafalannya membantu audiens menangkap detail informasi dengan baik, meskipun intensitas suaranya perlu dijaga agar tetap konstan.`;
+
+            return base + context;
         }
 
-        function renderP3(n, s) {
-            if (s >= 3) return `Kapasitas interaksi ${n} terlihat <span class="hl-blue">aktif dan responsif</span>. Ia mampu mendengarkan dengan saksama sebelum memberikan jawaban yang terstruktur. Keberanian ${n} dalam melemparkan pertanyaan balik menunjukkan bahwa ia mulai memahami cara membangun alur komunikasi yang dinamis.`;
-            return `Dalam hal engagement, ${n} cenderung <span class="hl-yellow">masih bersikap pasif</span>. Meskipun mampu menjawab pertanyaan, inisiatif untuk melibatkan audiens atau merespons secara sigap masih perlu distimulasi melalui latihan simulasi tanya-jawab yang lebih intensif di kelas.`;
+        function analyzeP3_Interaction(n, s, raw) {
+            let base = "";
+            let context = "";
+
+            if (s >= 3) base = `Dalam dimensi Interaction & Respons, ${n} menunjukkan sikap yang <span class="hl-blue">aktif dan komunikatif</span>. Ia mampu mendengarkan dengan seksama sebelum memberikan jawaban yang terstruktur, yang merupakan indikator empati komunikasi yang baik.`;
+            else base = `Pada aspek engagement, ${n} cenderung <span class="hl-yellow">masih bersikap pasif</span>. Responnya terhadap stimulus audiens masih terbatas, sehingga interaksi yang terjalin terasa searah dan kurang membangun dinamika diskusi yang hidup.`;
+
+            if (raw.includes("tanya") || raw.includes("jawab")) context = ` Keberaniannya dalam merespons pertanyaan dengan tenang menunjukkan bahwa ${n} mulai memahami pentingnya alur komunikasi dua arah yang fungsional.`;
+            if (raw.includes("diam") || raw.includes("pasif")) context = ` Kami mendorong ${n} untuk lebih berani berinisiatif dalam memulai komunikasi, bukan sekadar menunggu giliran untuk berbicara atau merespons.`;
+
+            return base + context;
         }
 
-        function renderP4(n, s) {
-            if (s >= 3) return `${n} telah mulai menggunakan <span class="hl-blue">gestur tangan yang natural</span> untuk memperkuat pesan. Penguasaan ruangnya cukup baik dengan postur tubuh yang tegak, meskipun distribusi kontak mata secara merata kepada audiens masih perlu dijadikan fokus latihan berkelanjutan.`;
-            return `Terkait penguasaan ruang, ${n} terlihat <span class="hl-red">masih statis dalam posisi berdiri</span>. Kurangnya penggunaan bahasa tubuh dan kontak mata membuat penyampaiannya terasa kurang persuasif, sehingga latihan sinkronisasi antara ucapan dan ekspresi non-verbal sangat direkomendasikan.`;
+        function analyzeP4_BodyLanguage(n, s, raw) {
+            let base = "";
+            let context = "";
+
+            if (s >= 3) base = `Terkait Ekspresi & Penguasaan Ruang, ${n} telah mampu menggunakan <span class="hl-blue">gestur tangan yang natural</span>. Bahasa tubuhnya mulai selaras dengan narasi, memberikan dukungan visual yang memperkuat pesan yang ia sampaikan secara verbal.`;
+            else base = `Dalam hal penguasaan ruang, penampilan ${n} <span class="hl-red">masih terasa statis</span>. Minimnya penggunaan bahasa tubuh dan koordinasi visual membuat presentasinya kehilangan daya tarik emosional yang dapat mengikat perhatian pendengar.`;
+
+            if (raw.includes("mata") || raw.includes("pandang")) context = ` Salah satu catatan penting adalah perlunya latihan distribusi kontak mata secara merata, agar audiens di setiap sudut ruangan merasa dilibatkan dalam pembicaraan.`;
+            if (raw.includes("gesture") || raw.includes("gerak")) context = ` Peningkatan pada aspek gestur akan membantu ${n} terlihat lebih luwes dan tidak kaku, sehingga pesan yang disampaikan terasa lebih tulus dan meyakinkan.`;
+
+            return base + context;
         }
 
-        function renderP5(n, s) {
-            if (s >= 3) return `Dalam dinamika kelompok, kehadiran ${n} dirasakan <span class="hl-green">positif dan inklusif</span>. Ia berani mendekati rekan sejawat dan menyesuaikan gaya bicaranya dengan baik. Kemampuan untuk mengajak rekan yang lebih pendiam menunjukkan awal dari jiwa kepemimpinan yang suportif.`;
-            return `Pada aspek inklusivitas, ${n} terlihat <span class="hl-yellow">masih membatasi diri</span> dalam pergaulan kelompok. Dibutuhkan bimbingan agar ${n} lebih berani membuka interaksi dan menempatkan diri secara positif saat harus bekerja sama dalam sebuah tim kecil.`;
+        function analyzeP5_Social(n, s, raw) {
+            let base = "";
+            let context = "";
+
+            if (s >= 3) base = `Pada aspek Inklusivitas, kehadiran ${n} di dalam kelompok memberikan <span class="hl-green">pengaruh sosial yang positif</span>. Ia mampu menempatkan diri dengan baik dan menyesuaikan gaya bicaranya secara fleksibel dengan teman sebaya yang berbeda karakter.`;
+            else base = `Terkait kontrol kelompok, ${n} tampak <span class="hl-yellow">masih membatasi diri</span>. Ia seringkali merasa ragu untuk mendekati atau mengajak anggota kelompok yang lebih pendiam, sehingga kehadirannya dalam tim belum memberikan dampak yang signifikan.`;
+
+            if (raw.includes("kelompok") || raw.includes("teman")) context = ` Kemampuannya untuk beradaptasi dengan rekan sejawat menunjukkan potensi kepemimpinan sosial yang bisa dikembangkan lebih lanjut melalui tugas-tugas kolaboratif.`;
+
+            return base + context;
         }
 
-        function renderP6(n, s, raw) {
+        function analyzeP6_Conclusion(n, s, raw) {
             const total = Object.values(s).reduce((a, b) => a + b, 0);
-            const status = total >= 15 ? "sangat memuaskan" : "menunjukkan progres";
-            return `<strong>Kesimpulan:</strong> Secara keseluruhan, performa ${n} bulan ini <span class="hl-blue">${status}</span>. Catatan khusus instruktur: "${raw || 'Peserta aktif di kelas'}". Kami <span class="hl-yellow">merekomendasikan ${n} untuk terus konsisten berlatih</span> guna mengasah poin-poin yang masih memerlukan perhatian, agar kompetensi bicaranya semakin profesional di masa depan.`;
+            let summary = "";
+            if (total >= 16) summary = `<span class="hl-green">sangat memuaskan</span>, di mana bakat alaminya mulai bersinergi dengan teknik bicaranya.`;
+            else if (total >= 12) summary = `<span class="hl-blue">menunjukkan progres positif</span>, meskipun masih memerlukan pemolesan pada detail-detail teknis tertentu.`;
+            else summary = `<span class="hl-red">masih berada pada tahap penyesuaian awal</span>, yang memerlukan pendampingan intensif agar kepercayaan dirinya tidak menurun.`;
+
+            let rec = "Kami merekomendasikan agar ${n} lebih rajin masuk kelas dan berlatih rutin.";
+            if (raw.includes("latihan") || raw.includes("rajin")) rec = `${n} perlu mempertahankan konsistensi latihan vokalnya agar kemajuan yang telah dicapai tetap stabil dan tidak mengalami kemunduran.`;
+            if (raw.includes("malu") || raw.includes("ragu")) rec = `Fokus utama bulan depan adalah membangun keberanian ${n} melalui latihan mandiri di rumah agar ia lebih siap saat menghadapi audiens yang lebih banyak.`;
+
+            return `<strong>Kesimpulan & Rekomendasi:</strong> Secara analitis, performa ${n} bulan ini ${summary} Berdasarkan observasi kami, <span class="hl-yellow">titik krusial pengembangan selanjutnya adalah ${rec}</span> Dengan pendekatan yang sabar namun disiplin, kami yakin potensi besar ${n} akan terus terasah dengan lebih tajam.`;
         }
 
+        // --- UTILS ---
         function resetForm() {
             if (confirm("Reset data?")) location.reload();
         }
 
         function downloadPDF() {
             const element = document.getElementById('report-content');
-            html2pdf().set({ margin: 0, filename: `Report_Offline_${state.namaPanggilan}.pdf`, html2canvas: { scale: 2 } }).from(element).save();
+            html2pdf().set({ 
+                margin: 0, 
+                filename: `Report_YEC_${state.namaPanggilan || 'Siswa'}.pdf`, 
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            }).from(element).save();
         }
 
-        window.onload = () => { lucide.createIcons(); renderInputs(); renderProgressBars(); };
+        window.onload = () => { 
+            lucide.createIcons(); 
+            renderInputs(); 
+            renderProgressBars(); 
+        };
     </script>
 </body>
 </html>
