@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YEC Report Generator - Smart Offline Version</title>
+    <title>YEC Report Generator - Orange Edition</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -14,161 +14,168 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .serif { font-family: 'Playfair Display', serif; }
-        .hl-blue { background-color: #dbeafe; color: #1e40af; padding: 0 4px; border-radius: 4px; font-weight: 600; }
+        .hl-blue { background-color: #fff7ed; color: #ea580c; padding: 0 4px; border-radius: 4px; font-weight: 600; border-bottom: 1px solid #fdba74; }
         .hl-red { background-color: #fee2e2; color: #991b1b; padding: 0 4px; border-radius: 4px; font-weight: 600; }
         .hl-green { background-color: #dcfce7; color: #166534; padding: 0 4px; border-radius: 4px; font-weight: 600; }
         .hl-yellow { background-color: #fef9c3; color: #854d0e; padding: 0 4px; border-radius: 4px; font-weight: 600; }
-        strong { font-weight: 700; color: #0f172a; }
+        strong { font-weight: 700; color: #431407; }
         @media print { .no-print { display: none !important; } }
         
         textarea::-webkit-scrollbar { width: 6px; }
-        textarea::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        textarea::-webkit-scrollbar-thumb { background: #ffedd5; border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen bg-slate-50 p-4 md:p-8 text-slate-900">
+<body class="min-h-screen bg-orange-50/30 p-4 md:p-8 text-slate-900">
 
     <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
         
         <!-- PANEL KONTROL & INPUT (KIRI) -->
         <div class="lg:w-1/3 space-y-6 no-print">
             <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center gap-2 text-blue-900 font-bold">
-                    <i data-lucide="shield-check" class="w-5 h-5"></i>
-                    <span>YEC Smart Offline Dashboard</span>
+                <div class="flex items-center gap-2 text-orange-900 font-bold">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-orange-500"></i>
+                    <span>YEC AI Dashboard</span>
                 </div>
-                <button onclick="resetForm()" class="text-slate-400 hover:text-red-500 transition-colors">
+                <button onclick="resetForm()" class="text-orange-300 hover:text-red-500 transition-colors">
                     <i data-lucide="trash-2" class="w-5 h-5"></i>
                 </button>
             </div>
 
             <!-- Identitas -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold flex items-center gap-2 mb-6 text-slate-800">
-                    <i data-lucide="user" class="text-blue-500 w-[18px] h-[18px]"></i> Identitas Peserta
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-orange-100">
+                <h2 class="text-lg font-bold flex items-center gap-2 mb-6 text-orange-900">
+                    <i data-lucide="user" class="text-orange-500 w-[18px] h-[18px]"></i> Identitas Peserta
                 </h2>
                 <div class="space-y-4">
                     <div>
-                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nama Lengkap</label>
-                        <input id="namaLengkap" type="text" oninput="updatePreview()" class="w-full mt-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Masukkan nama lengkap...">
+                        <label class="text-[10px] font-bold text-orange-400 uppercase tracking-widest ml-1">Nama Lengkap</label>
+                        <input id="namaLengkap" type="text" oninput="updatePreview()" class="w-full mt-1 px-4 py-2.5 bg-orange-50/30 border border-orange-100 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 transition-all" placeholder="Masukkan nama lengkap...">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nama Panggilan</label>
-                        <input id="namaPanggilan" type="text" oninput="updatePreview()" class="w-full mt-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Nama untuk di laporan...">
+                        <label class="text-[10px] font-bold text-orange-400 uppercase tracking-widest ml-1">Nama Panggilan</label>
+                        <input id="namaPanggilan" type="text" oninput="updatePreview()" class="w-full mt-1 px-4 py-2.5 bg-orange-50/30 border border-orange-100 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 transition-all" placeholder="Nama untuk di laporan...">
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Skor Akhir (0-100)</label>
-                        <input id="nilaiAkhir" type="number" oninput="updatePreview()" class="w-full mt-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all" placeholder="Contoh: 85">
+                        <label class="text-[10px] font-bold text-orange-400 uppercase tracking-widest ml-1">Skor Akhir (0-100)</label>
+                        <input id="nilaiAkhir" type="number" oninput="updatePreview()" class="w-full mt-1 px-4 py-2.5 bg-orange-50/30 border border-orange-100 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 transition-all" placeholder="Contoh: 85">
                     </div>
                 </div>
             </div>
 
             <!-- Matriks Penilaian -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold flex items-center gap-2 mb-6 text-slate-800">
-                    <i data-lucide="bar-chart-3" class="text-blue-500 w-[18px] h-[18px]"></i> Matriks Penilaian
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-orange-100">
+                <h2 class="text-lg font-bold flex items-center gap-2 mb-6 text-orange-900">
+                    <i data-lucide="bar-chart-3" class="text-orange-500 w-[18px] h-[18px]"></i> Matriks Penilaian
                 </h2>
                 <div id="skor-container" class="space-y-5"></div>
             </div>
 
             <!-- Observasi Mentah -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold flex items-center gap-2 mb-2 text-slate-800">
-                    <i data-lucide="message-square" class="text-blue-500 w-[18px] h-[18px]"></i> Observasi Instruktur
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-orange-100">
+                <h2 class="text-lg font-bold flex items-center gap-2 mb-2 text-orange-900">
+                    <i data-lucide="message-square" class="text-orange-500 w-[18px] h-[18px]"></i> Observasi Instruktur
                 </h2>
-                <p class="text-[10px] text-slate-400 mb-4 italic leading-tight">Masukkan detail perilaku (misal: "suara pelan", "kontak mata kurang", "aktif tanya"). Sistem akan mengolahnya secara analitis.</p>
-                <textarea id="rawNotes" class="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-blue-500 h-44 resize-none leading-relaxed transition-all" placeholder="Tuliskan poin observasi mendalam di sini..."></textarea>
+                <p class="text-[10px] text-orange-400 mb-4 italic leading-tight">Berikan poin-poin observasi mentah. AI akan menyusunnya menjadi laporan narasi formal.</p>
+                <textarea id="rawNotes" class="w-full px-4 py-4 bg-orange-50/30 border border-orange-100 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-orange-500 h-44 resize-none leading-relaxed transition-all" placeholder="Contoh: Suara lantang tapi artikulasi cepat. Gesture tangan aktif. Masih butuh latihan kontak mata..."></textarea>
                 
-                <button onclick="generateSmartLocalReport()" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-xl transform active:scale-95">
+                <button id="generateBtn" onclick="generateAIReport()" class="w-full mt-6 bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-xl transform active:scale-95">
                     <i data-lucide="brain" class="w-5 h-5"></i>
-                    <span>Elaborasi Analitis (Offline)</span>
+                    <span id="btnText">Elaborasi Laporan (AI)</span>
                 </button>
             </div>
         </div>
 
         <!-- PRATINJAU LAPORAN (KANAN) -->
-        <div class="flex-1 bg-white rounded-[2.5rem] overflow-hidden shadow-2xl min-h-[1150px] border border-slate-200 relative">
+        <div class="flex-1 bg-white rounded-[2.5rem] overflow-hidden shadow-2xl min-h-[1150px] border border-orange-100 relative">
             
             <div class="absolute top-8 right-8 z-50 no-print flex gap-3">
-                <button onclick="window.print()" class="bg-white text-slate-700 p-3 rounded-2xl shadow-lg hover:bg-slate-50 transition-all border border-slate-100">
+                <button onclick="window.print()" class="bg-white text-orange-700 p-3 rounded-2xl shadow-lg hover:bg-orange-50 transition-all border border-orange-100">
                     <i data-lucide="printer" class="w-5 h-5"></i>
                 </button>
-                <button onclick="downloadPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl shadow-xl transition-all flex items-center gap-2 font-bold text-sm transform hover:-translate-y-1">
+                <button onclick="downloadPDF()" class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-2xl shadow-xl transition-all flex items-center gap-2 font-bold text-sm transform hover:-translate-y-1">
                     <i data-lucide="download" class="w-5 h-5"></i> Simpan PDF
                 </button>
             </div>
 
             <div id="report-content" class="relative bg-white min-h-full">
                 <!-- Watermark -->
-                <div class="absolute inset-0 pointer-events-none overflow-hidden flex flex-col justify-around items-center opacity-[0.02] z-0 select-none">
-                    <div class="text-[12rem] font-black -rotate-[35deg] whitespace-nowrap">YEC.CO.ID</div>
-                    <div class="text-[12rem] font-black -rotate-[35deg] whitespace-nowrap">YEC.CO.ID</div>
-                    <div class="text-[12rem] font-black -rotate-[35deg] whitespace-nowrap">YEC.CO.ID</div>
+                <div class="absolute inset-0 pointer-events-none overflow-hidden flex flex-col justify-around items-center opacity-[0.04] z-0 select-none">
+                    <div class="text-[12rem] font-black -rotate-[35deg] whitespace-nowrap text-orange-900">YEC.CO.ID</div>
+                    <div class="text-[12rem] font-black -rotate-[35deg] whitespace-nowrap text-orange-900">YEC.CO.ID</div>
+                    <div class="text-[12rem] font-black -rotate-[35deg] whitespace-nowrap text-orange-900">YEC.CO.ID</div>
                 </div>
 
                 <div class="relative z-10">
-                    <div class="bg-gradient-to-br from-[#0f172a] via-[#1e3a8a] to-[#3b82f6] p-20 text-center text-white relative">
+                    <div class="bg-gradient-to-br from-orange-600 via-orange-500 to-orange-400 p-20 text-center text-white relative">
+                        <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -mr-48 -mt-48 blur-3xl"></div>
                         <h1 class="serif text-4xl md:text-5xl font-bold mb-4 tracking-tight">Monthly Observation Report</h1>
-                        <div class="inline-flex items-center gap-3 px-6 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
-                            <span class="tracking-[0.25em] uppercase text-[10px] font-bold text-blue-100">Public Speaking Anak Reguler</span>
+                        <div class="inline-flex items-center gap-3 px-6 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/20">
+                            <span class="tracking-[0.25em] uppercase text-[10px] font-bold text-orange-50">Public Speaking Anak Reguler</span>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 p-12 bg-slate-50/80 border-b border-slate-100 backdrop-blur-sm">
-                        <div class="border-r border-slate-200">
-                            <p class="text-[9px] text-slate-400 uppercase font-black tracking-[0.2em] mb-2">Nama Lengkap Peserta</p>
-                            <p id="view-namaLengkap" class="text-2xl font-bold text-slate-800 leading-none">—</p>
+                    <div class="grid grid-cols-2 p-12 bg-orange-50/50 border-b border-orange-100 backdrop-blur-sm">
+                        <div class="border-r border-orange-200">
+                            <p class="text-[9px] text-orange-400 uppercase font-black tracking-[0.2em] mb-2">Nama Lengkap Peserta</p>
+                            <p id="view-namaLengkap" class="text-2xl font-bold text-orange-950 leading-none">—</p>
                         </div>
                         <div class="pl-12">
-                            <p class="text-[9px] text-slate-400 uppercase font-black tracking-[0.2em] mb-2">Nama Panggilan</p>
-                            <p id="view-namaPanggilan" class="text-2xl font-bold text-blue-700 leading-none">—</p>
+                            <p class="text-[9px] text-orange-400 uppercase font-black tracking-[0.2em] mb-2">Nama Panggilan</p>
+                            <p id="view-namaPanggilan" class="text-2xl font-bold text-orange-600 leading-none">—</p>
                         </div>
                     </div>
 
                     <div class="p-12">
                         <div class="flex items-center gap-4 mb-10">
-                            <div class="h-10 w-1.5 bg-blue-600 rounded-full"></div>
-                            <h2 class="serif text-2xl font-bold text-slate-800">Matriks Capaian Kompetensi</h2>
+                            <div class="h-10 w-1.5 bg-orange-500 rounded-full"></div>
+                            <h2 class="serif text-2xl font-bold text-orange-900">Matriks Capaian Kompetensi</h2>
                         </div>
                         <div id="progress-bars" class="grid grid-cols-1 gap-7"></div>
-                        <div class="mt-14 bg-gradient-to-r from-blue-50 to-indigo-50 p-10 rounded-[2rem] flex items-center justify-between border border-blue-100 shadow-inner">
+                        <div class="mt-14 bg-gradient-to-r from-orange-50 to-white p-10 rounded-[2rem] flex items-center justify-between border border-orange-100 shadow-inner">
                             <div class="space-y-1">
-                                <p class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Akumulasi Skor Bulanan</p>
-                                <span class="text-blue-900 font-bold text-2xl uppercase italic tracking-tight">Evaluasi Akhir Sesi</span>
+                                <p class="text-[10px] font-black text-orange-400 uppercase tracking-widest">Akumulasi Skor Bulanan</p>
+                                <span class="text-orange-900 font-bold text-2xl uppercase italic tracking-tight">Evaluasi Akhir Sesi</span>
                             </div>
-                            <div class="text-right text-blue-900">
+                            <div class="text-right text-orange-900">
                                 <span id="view-nilaiAkhir" class="text-7xl font-black tracking-tighter">0</span>
-                                <span class="text-2xl font-light text-blue-300 ml-2">/100</span>
+                                <span class="text-2xl font-light text-orange-300 ml-2">/100</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="p-12 bg-white border-t border-slate-100">
+                    <div class="p-12 bg-white border-t border-orange-50">
                         <div class="flex items-center gap-4 mb-10">
-                            <div class="h-10 w-1.5 bg-blue-600 rounded-full"></div>
-                            <h2 class="serif text-2xl font-bold text-slate-800">Analisis Kualitatif & Rekomendasi</h2>
+                            <div class="h-10 w-1.5 bg-orange-500 rounded-full"></div>
+                            <h2 class="serif text-2xl font-bold text-orange-900">Catatan Observasi</h2>
                         </div>
-                        <div id="ai-content" class="space-y-10 text-slate-600 text-[15.5px] leading-[1.95] text-justify font-light">
-                            <div class="py-20 text-center border-2 border-dashed border-slate-100 rounded-[2rem]">
-                                <p class="italic text-slate-400">Belum ada narasi. Silakan isi data dan tekan tombol 'Elaborasi Analitis'.</p>
+                        
+                        <div id="ai-loading" class="hidden flex flex-col items-center justify-center py-32 text-orange-200 animate-pulse">
+                            <i data-lucide="sparkles" class="w-[60px] h-[60px] mb-6 opacity-40 text-orange-400"></i>
+                            <p class="text-sm font-bold tracking-widest uppercase text-orange-800">AI Sedang Menyusun Laporan...</p>
+                        </div>
+
+                        <div id="ai-content" class="space-y-10 text-orange-950/80 text-[15.5px] leading-[1.95] text-justify font-light">
+                            <div class="py-20 text-center border-2 border-dashed border-orange-50 rounded-[2rem]">
+                                <p class="italic text-orange-300">Silakan masukkan data dan klik tombol 'Elaborasi Laporan'.</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="p-20 bg-slate-50 border-t border-slate-100 flex flex-col md:flex-row justify-between items-end gap-12">
+                    <div class="p-20 bg-orange-50/30 border-t border-orange-100 flex flex-col md:flex-row justify-between items-end gap-12">
                         <div class="space-y-5">
-                            <div class="flex items-center gap-3 text-blue-600 bg-white px-4 py-2 rounded-2xl shadow-sm inline-flex">
+                            <div class="flex items-center gap-3 text-orange-600 bg-white px-4 py-2 rounded-2xl shadow-sm inline-flex">
                                 <i data-lucide="check-circle-2" class="w-[18px] h-[18px]"></i>
                                 <span class="text-[10px] font-bold uppercase tracking-[0.2em]">Verified Academic Report</span>
                             </div>
-                            <p class="text-[11px] text-slate-400 italic max-w-sm leading-relaxed">
-                                Dokumen ini dihasilkan secara otomatis melalui sistem evaluasi instruktur YEC.CO.ID untuk mendukung transparansi perkembangan bakat komunikasi anak.
+                            <p class="text-[11px] text-orange-400 italic max-w-sm leading-relaxed">
+                                Dokumen ini dihasilkan melalui integrasi AI untuk mendukung transparansi perkembangan bakat komunikasi anak.
                             </p>
                         </div>
                         <div class="text-center group min-w-[220px]">
-                            <div class="mb-6 h-12 flex items-center justify-center opacity-10 italic text-slate-400 text-sm">Digital Signature Attached</div>
-                            <div class="w-full h-px bg-slate-300 mb-4"></div>
-                            <p class="text-[11px] font-black text-slate-700 uppercase tracking-[0.25em]">Instruktur Public Speaking</p>
-                            <p class="text-[9px] text-slate-400 mt-2 font-bold">YEC.CO.ID PROFESSIONAL EDUCATION</p>
+                            <div class="mb-6 h-12 flex items-center justify-center opacity-10 italic text-orange-400 text-sm">Digital Signature Attached</div>
+                            <div class="w-full h-px bg-orange-200 mb-4"></div>
+                            <p class="text-[11px] font-black text-orange-900 uppercase tracking-[0.25em]">Instruktur Public Speaking</p>
+                            <p class="text-[9px] text-orange-400 mt-2 font-bold">YEC.CO.ID PROFESSIONAL EDUCATION</p>
                         </div>
                     </div>
                 </div>
@@ -177,7 +184,8 @@
     </div>
 
     <script>
-        // --- DATA & CONFIG ---
+        const apiKey = ""; 
+
         let state = {
             namaLengkap: '', namaPanggilan: '', nilaiAkhir: '', rawNotes: '',
             skor: { artikulasi: 3, engagement: 3, ekspresi: 3, inklusivitas: 2, kecemasan: 3 }
@@ -191,15 +199,14 @@
             kecemasan: "Manajemen Kecemasan"
         };
 
-        // --- CORE UI FUNCTIONS ---
         function renderInputs() {
             const container = document.getElementById('skor-container');
             container.innerHTML = Object.keys(state.skor).map(key => `
                 <div class="flex items-center justify-between">
-                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-tighter">${key}</label>
+                    <label class="text-xs font-semibold text-orange-700 uppercase tracking-tighter">${key}</label>
                     <div class="flex gap-1.5" data-aspek="${key}">
                         ${[1, 2, 3, 4].map(n => `
-                            <button onclick="setSkor('${key}', ${n})" class="skor-btn w-9 h-9 rounded-xl text-xs font-bold transition-all ${state.skor[key] === n ? 'bg-blue-600 text-white shadow-lg scale-110' : 'bg-slate-50 text-slate-400'}">${n}</button>
+                            <button onclick="setSkor('${key}', ${n})" class="skor-btn w-9 h-9 rounded-xl text-xs font-bold transition-all ${state.skor[key] === n ? 'bg-orange-600 text-white shadow-lg scale-110' : 'bg-orange-50 text-orange-300'}">${n}</button>
                         `).join('')}
                     </div>
                 </div>
@@ -228,14 +235,18 @@
             const container = document.getElementById('progress-bars');
             container.innerHTML = Object.entries(state.skor).map(([key, val]) => {
                 const percentage = (val / 4) * 100;
-                const colorClass = val === 4 ? 'bg-emerald-500' : val === 3 ? 'bg-blue-500' : val === 2 ? 'bg-yellow-500' : 'bg-red-500';
+                let colorClass = 'bg-orange-500'; 
+                if (val === 4) colorClass = 'bg-emerald-500';
+                if (val === 2) colorClass = 'bg-amber-400';
+                if (val === 1) colorClass = 'bg-red-500';
+                
                 return `
                     <div class="group">
                         <div class="flex justify-between mb-2 items-end">
-                            <span class="text-xs font-bold text-slate-500 uppercase tracking-tighter">${labels[key]}</span>
-                            <span class="text-xs font-black bg-white border border-slate-200 px-3 py-1 rounded-lg shadow-sm">${val} / 4</span>
+                            <span class="text-xs font-bold text-orange-800 uppercase tracking-tighter">${labels[key]}</span>
+                            <span class="text-xs font-black bg-white border border-orange-100 px-3 py-1 rounded-lg shadow-sm text-orange-900">${val} / 4</span>
                         </div>
-                        <div class="w-full bg-slate-100 rounded-full h-3 p-0.5 overflow-hidden border border-slate-100">
+                        <div class="w-full bg-orange-100/50 rounded-full h-3 p-0.5 overflow-hidden border border-orange-50">
                             <div class="h-full rounded-full transition-all duration-700 ${colorClass}" style="width: ${percentage}%"></div>
                         </div>
                     </div>
@@ -243,111 +254,91 @@
             }).join('');
         }
 
-        // --- SMART LOCAL GENERATOR ENGINE ---
-        function generateSmartLocalReport() {
-            const name = state.namaPanggilan || "Siswa";
-            const raw = state.rawNotes.toLowerCase();
+        async function generateAIReport() {
+            if (!state.namaPanggilan || !state.rawNotes) {
+                alert("Harap isi Nama Panggilan dan Observasi Instruktur terlebih dahulu.");
+                return;
+            }
 
-            const paragraphs = [
-                analyzeP1_Anxiety(name, state.skor.kecemasan, raw),
-                analyzeP2_Vocal(name, state.skor.artikulasi, raw),
-                analyzeP3_Interaction(name, state.skor.engagement, raw),
-                analyzeP4_BodyLanguage(name, state.skor.ekspresi, raw),
-                analyzeP5_Social(name, state.skor.inklusivitas, raw),
-                analyzeP6_Conclusion(name, state.skor, raw)
-            ];
+            toggleLoading(true);
 
+            // System prompt diperketat agar tidak bergaya chat
+            const systemPrompt = `
+                Anda adalah instruktur Public Speaking profesional YEC.CO.ID.
+                Tugas Anda: Menyusun laporan observasi formal berdasarkan skor dan catatan instruktur.
+                
+                GAYA BAHASA & STRUKTUR:
+                1. WAJIB menggunakan nada narasi laporan formal (bukan gaya percakapan/chat).
+                2. JANGAN gunakan kata sapaan seperti "Halo", "Bapak/Ibu", "Semangat ya", atau salam pembuka/penutup lainnya.
+                3. Langsung mulai dengan analisis perilaku dan teknis siswa.
+                4. Terdiri dari MAKSIMAL 6 paragraf naratif.
+                5. Gunakan nama panggilan (${state.namaPanggilan}) sebagai subjek laporan.
+                6. Elaborasi catatan mentah ke dalam aspek penilaian yang sesuai secara kritis, tajam, dan analitis.
+                7. Highlight poin penting dengan tag HTML:
+                   - <span class="hl-green">...</span> untuk kelebihan.
+                   - <span class="hl-red">...</span> untuk masalah kritis/area perbaikan.
+                   - <span class="hl-blue">...</span> untuk progres teknis.
+                   - <span class="hl-yellow">...</span> untuk rekomendasi strategis.
+                
+                DATA:
+                - Skor: Artikulasi(${state.skor.artikulasi}), Interaction(${state.skor.engagement}), Ekspresi(${state.skor.ekspresi}), Inklusivitas(${state.skor.inklusivitas}), Kecemasan(${state.skor.kecemasan}).
+                - Catatan Mentah Instruktur: "${state.rawNotes}"
+                
+                Output harus berupa JSON: { "paragraphs": ["p1", "p2", "p3", "p4", "p5", "p6"] }
+            `;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "Tulis narasi laporan observasi formal sekarang." }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] },
+                        generationConfig: { responseMimeType: "application/json" }
+                    })
+                });
+
+                if (!response.ok) throw new Error('API Request Failed');
+                const result = await response.json();
+                const data = JSON.parse(result.candidates[0].content.parts[0].text);
+                
+                renderAIPara(data.paragraphs);
+            } catch (error) {
+                console.error(error);
+                alert("Gagal terhubung ke API Gemini. Periksa koneksi internet.");
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        function renderAIPara(paragraphs) {
             const container = document.getElementById('ai-content');
             container.innerHTML = paragraphs.map(p => `
-                <p class="relative pl-8 before:content-[''] before:absolute before:left-0 before:top-3.5 before:w-2 before:h-2 before:bg-blue-200 before:rounded-full">${p}</p>
+                <p class="relative pl-8 before:content-[''] before:absolute before:left-0 before:top-3.5 before:w-2 before:h-2 before:bg-orange-300 before:rounded-full">${p}</p>
             `).join('');
         }
 
-        // --- PARAGRAPH ANALYSIS LOGIC ---
+        function toggleLoading(isLoading) {
+            const btn = document.getElementById('generateBtn');
+            const text = document.getElementById('btnText');
+            const loading = document.getElementById('ai-loading');
+            const content = document.getElementById('ai-content');
 
-        function analyzeP1_Anxiety(n, s, raw) {
-            let base = "";
-            let context = "";
-
-            if (s >= 4) base = `Mengenai aspek manajemen kecemasan, ${n} menunjukkan <span class="hl-green">stabilitas emosional yang sangat mengagumkan</span>. Ia mampu mengontrol diri dengan tenang saat menjadi pusat perhatian utama di kelas.`;
-            else if (s >= 3) base = `Dalam hal kontrol emosi, ${n} terlihat <span class="hl-blue">cukup tenang dan terkendali</span>. Keberaniannya untuk tampil mandiri di depan publik menunjukkan pondasi kepercayaan diri yang mulai terbentuk secara alami.`;
-            else base = `Terkait aspek ketenangan, ${n} tampak <span class="hl-red">masih menunjukkan tanda-tanda kecemasan</span>. Hal ini seringkali memicu kegelisahan fisik ringan yang secara tidak langsung mengganggu fokus audiens terhadap pesan yang disampaikan.`;
-
-            if (raw.includes("fidgeting") || raw.includes("gelisah")) context = ` Kami mengamati adanya sedikit tantangan saat ${n} berusaha menjaga fokusnya tetap stabil, terutama ketika menghadapi transisi materi yang menantang.`;
-            if (raw.includes("tenang") || raw.includes("percaya diri")) context = ` Kemandiriannya terlihat jelas dari caranya berdiri dan kesiapannya merespons situasi panggung tanpa memerlukan bantuan instruktur.`;
-
-            return base + context;
+            if (isLoading) {
+                btn.disabled = true;
+                text.innerText = "Processing...";
+                loading.classList.remove('hidden');
+                content.classList.add('hidden');
+            } else {
+                btn.disabled = false;
+                text.innerText = "Elaborasi Laporan (AI)";
+                loading.classList.add('hidden');
+                content.classList.remove('hidden');
+            }
         }
 
-        function analyzeP2_Vocal(n, s, raw) {
-            let base = "";
-            let context = "";
-
-            if (s >= 4) base = `Pada aspek Artikulasi dan Proyeksi Suara, ${n} berhasil mencapai <span class="hl-green">kejelasan vokal yang sangat tajam</span>. Setiap kata yang diucapkan memiliki bobot dan intonasi yang pas, menjangkau jarak ideal 3 meter dengan sangat efektif.`;
-            else if (s >= 3) base = `Kualitas vokal ${n} secara keseluruhan <span class="hl-blue">sudah cukup baik dan jelas</span>. Meskipun volume suaranya stabil, masih terdapat ruang untuk melakukan eksplorasi pada penekanan kata (power) agar pesan terasa lebih otoritatif.`;
-            else base = `Kami mengidentifikasi adanya <span class="hl-red">ketidakstabilan pada proyeksi vokal</span> ${n}. Seringkali volume suara menurun di tengah kalimat, yang berisiko membuat pesan utama menjadi kurang tersampaikan dengan tegas kepada audiens.`;
-
-            if (raw.includes("suara pelan") || raw.includes("bisik")) context = ` Secara khusus, ${n} perlu melatih teknik pernapasan diafragma agar volume suaranya tidak menghilang saat ia berbicara dalam durasi yang lebih panjang.`;
-            if (raw.includes("artikulasi") || raw.includes("jelas")) context = ` Ketajaman pelafalannya membantu audiens menangkap detail informasi dengan baik, meskipun intensitas suaranya perlu dijaga agar tetap konstan.`;
-
-            return base + context;
-        }
-
-        function analyzeP3_Interaction(n, s, raw) {
-            let base = "";
-            let context = "";
-
-            if (s >= 3) base = `Dalam dimensi Interaction & Respons, ${n} menunjukkan sikap yang <span class="hl-blue">aktif dan komunikatif</span>. Ia mampu mendengarkan dengan seksama sebelum memberikan jawaban yang terstruktur, yang merupakan indikator empati komunikasi yang baik.`;
-            else base = `Pada aspek engagement, ${n} cenderung <span class="hl-yellow">masih bersikap pasif</span>. Responnya terhadap stimulus audiens masih terbatas, sehingga interaksi yang terjalin terasa searah dan kurang membangun dinamika diskusi yang hidup.`;
-
-            if (raw.includes("tanya") || raw.includes("jawab")) context = ` Keberaniannya dalam merespons pertanyaan dengan tenang menunjukkan bahwa ${n} mulai memahami pentingnya alur komunikasi dua arah yang fungsional.`;
-            if (raw.includes("diam") || raw.includes("pasif")) context = ` Kami mendorong ${n} untuk lebih berani berinisiatif dalam memulai komunikasi, bukan sekadar menunggu giliran untuk berbicara atau merespons.`;
-
-            return base + context;
-        }
-
-        function analyzeP4_BodyLanguage(n, s, raw) {
-            let base = "";
-            let context = "";
-
-            if (s >= 3) base = `Terkait Ekspresi & Penguasaan Ruang, ${n} telah mampu menggunakan <span class="hl-blue">gestur tangan yang natural</span>. Bahasa tubuhnya mulai selaras dengan narasi, memberikan dukungan visual yang memperkuat pesan yang ia sampaikan secara verbal.`;
-            else base = `Dalam hal penguasaan ruang, penampilan ${n} <span class="hl-red">masih terasa statis</span>. Minimnya penggunaan bahasa tubuh dan koordinasi visual membuat presentasinya kehilangan daya tarik emosional yang dapat mengikat perhatian pendengar.`;
-
-            if (raw.includes("mata") || raw.includes("pandang")) context = ` Salah satu catatan penting adalah perlunya latihan distribusi kontak mata secara merata, agar audiens di setiap sudut ruangan merasa dilibatkan dalam pembicaraan.`;
-            if (raw.includes("gesture") || raw.includes("gerak")) context = ` Peningkatan pada aspek gestur akan membantu ${n} terlihat lebih luwes dan tidak kaku, sehingga pesan yang disampaikan terasa lebih tulus dan meyakinkan.`;
-
-            return base + context;
-        }
-
-        function analyzeP5_Social(n, s, raw) {
-            let base = "";
-            let context = "";
-
-            if (s >= 3) base = `Pada aspek Inklusivitas, kehadiran ${n} di dalam kelompok memberikan <span class="hl-green">pengaruh sosial yang positif</span>. Ia mampu menempatkan diri dengan baik dan menyesuaikan gaya bicaranya secara fleksibel dengan teman sebaya yang berbeda karakter.`;
-            else base = `Terkait kontrol kelompok, ${n} tampak <span class="hl-yellow">masih membatasi diri</span>. Ia seringkali merasa ragu untuk mendekati atau mengajak anggota kelompok yang lebih pendiam, sehingga kehadirannya dalam tim belum memberikan dampak yang signifikan.`;
-
-            if (raw.includes("kelompok") || raw.includes("teman")) context = ` Kemampuannya untuk beradaptasi dengan rekan sejawat menunjukkan potensi kepemimpinan sosial yang bisa dikembangkan lebih lanjut melalui tugas-tugas kolaboratif.`;
-
-            return base + context;
-        }
-
-        function analyzeP6_Conclusion(n, s, raw) {
-            const total = Object.values(s).reduce((a, b) => a + b, 0);
-            let summary = "";
-            if (total >= 16) summary = `<span class="hl-green">sangat memuaskan</span>, di mana bakat alaminya mulai bersinergi dengan teknik bicaranya.`;
-            else if (total >= 12) summary = `<span class="hl-blue">menunjukkan progres positif</span>, meskipun masih memerlukan pemolesan pada detail-detail teknis tertentu.`;
-            else summary = `<span class="hl-red">masih berada pada tahap penyesuaian awal</span>, yang memerlukan pendampingan intensif agar kepercayaan dirinya tidak menurun.`;
-
-            let rec = "Kami merekomendasikan agar ${n} lebih rajin masuk kelas dan berlatih rutin.";
-            if (raw.includes("latihan") || raw.includes("rajin")) rec = `${n} perlu mempertahankan konsistensi latihan vokalnya agar kemajuan yang telah dicapai tetap stabil dan tidak mengalami kemunduran.`;
-            if (raw.includes("malu") || raw.includes("ragu")) rec = `Fokus utama bulan depan adalah membangun keberanian ${n} melalui latihan mandiri di rumah agar ia lebih siap saat menghadapi audiens yang lebih banyak.`;
-
-            return `<strong>Kesimpulan & Rekomendasi:</strong> Secara analitis, performa ${n} bulan ini ${summary} Berdasarkan observasi kami, <span class="hl-yellow">titik krusial pengembangan selanjutnya adalah ${rec}</span> Dengan pendekatan yang sabar namun disiplin, kami yakin potensi besar ${n} akan terus terasah dengan lebih tajam.`;
-        }
-
-        // --- UTILS ---
         function resetForm() {
-            if (confirm("Reset data?")) location.reload();
+            if (confirm("Reset seluruh data input?")) location.reload();
         }
 
         function downloadPDF() {
