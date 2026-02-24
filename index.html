@@ -149,8 +149,8 @@
                         <div class="absolute inset-0 opacity-10 pointer-events-none">
                             <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 100 C 20 0 50 0 100 100 Z" fill="white"></path></svg>
                         </div>
-                        <h1 class="text-3xl md:text-4xl font-black mb-3 tracking-tight uppercase drop-shadow-lg font-fun">Monthly Observation Report</h1>
-                        <div class="inline-flex items-center gap-4 px-6 py-2 bg-black/10 backdrop-blur-md rounded-full border border-white/20 font-fun">
+                        <h1 class="text-3xl md:text-4xl font-black mb-3 tracking-tight uppercase drop-shadow-lg font-fun text-white">Monthly Observation Report</h1>
+                        <div class="inline-flex items-center gap-4 px-6 py-2 bg-black/10 backdrop-blur-md rounded-full border border-white/20 font-fun text-white">
                             <div class="w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
                             <span class="tracking-[0.3em] uppercase text-[10px] font-bold">Public Speaking Anak Reguler</span>
                         </div>
@@ -185,28 +185,28 @@
                             <div class="h-8 w-2 bg-orange-400 rounded-full shadow-sm"></div>
                             <h2 class="text-2xl font-black text-indigo-950 uppercase tracking-tighter">Matriks Capaian Kompetensi</h2>
                         </div>
-                        <div id="progress-visuals" class="grid grid-cols-2 gap-x-12 gap-y-10">
+                        <div id="progress-visuals" class="grid grid-cols-2 gap-x-12 gap-y-10 text-slate-800">
                             <!-- JS Rendered -->
                         </div>
                     </div>
 
-                    <!-- Catatan Section -->
+                    <!-- Catatan Section - Clean White Design -->
                     <div class="p-12 pt-0 prevent-split">
-                        <div class="bg-indigo-950 rounded-[3rem] p-12 text-white relative overflow-hidden shadow-inner">
-                            <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-10 -mt-10"></div>
+                        <div class="bg-slate-50/50 border-2 border-slate-100 rounded-[3rem] p-12 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -mr-10 -mt-10 opacity-60"></div>
                             <div class="flex items-center gap-4 mb-8">
-                                <div class="h-8 w-2 bg-teal-400 rounded-full"></div>
-                                <h2 class="text-2xl font-black uppercase tracking-tighter">Catatan Observasi</h2>
+                                <div class="h-8 w-2 bg-teal-400 rounded-full shadow-sm"></div>
+                                <h2 class="text-2xl font-black text-indigo-950 uppercase tracking-tighter font-fun">Catatan Observasi</h2>
                             </div>
-                            <div id="view-notes" class="observation-container text-indigo-50/90 text-[16px] font-normal px-2">
-                                <p class="italic text-indigo-300/50 text-center py-6">Silakan tuliskan evaluasi mentor pada panel input.</p>
+                            <div id="view-notes" class="observation-container text-slate-700 text-[16px] font-normal px-2">
+                                <p class="italic text-slate-300 text-center py-6">Silakan tuliskan evaluasi mentor pada panel input.</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Footer Signature -->
                     <div class="p-12 mt-auto pb-16 prevent-split">
-                        <div class="flex justify-between items-end border-t-2 border-dashed border-slate-100 pt-10">
+                        <div class="flex justify-between items-end border-t-2 border-dashed border-slate-100 pt-10 text-slate-800">
                             <div class="max-w-[300px]">
                                 <div class="flex items-center gap-2 mb-4">
                                     <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
@@ -295,7 +295,7 @@
             let text = state.rawNotes.trim();
 
             if (!text) {
-                container.innerHTML = '<p class="italic text-indigo-300/50 text-center py-10">Catatan mentor akan tertulis di sini.</p>';
+                container.innerHTML = '<p class="italic text-slate-300 text-center py-10">Catatan mentor akan tertulis di sini.</p>';
                 return;
             }
 
@@ -352,11 +352,10 @@
         function downloadPDF() {
             const element = document.getElementById('report-content');
             
-            // Konfigurasi PDF yang dioptimalkan untuk kerapihan perpotongan
             const opt = {
-                margin: [0.3, 0, 0.3, 0], // Margin atas/bawah 0.3 inci
-                filename: `YEC_Report_${state.namaPanggilan || 'Student'}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
+                margin: 0,
+                filename: `Report_YEC_${state.namaPanggilan || 'Student'}.pdf`,
+                image: { type: 'jpeg', quality: 1 },
                 html2canvas: { 
                     scale: 2, 
                     useCORS: true, 
@@ -365,14 +364,10 @@
                     width: 800 
                 },
                 jsPDF: { 
-                    unit: 'in', 
-                    format: 'a4', 
+                    unit: 'px', 
+                    format: [800, 1131], 
                     orientation: 'portrait', 
-                    compress: true 
-                },
-                // Menghindari perpotongan elemen secara sembarangan
-                pagebreak: { 
-                    mode: ['avoid-all', 'css', 'legacy'] 
+                    hotfixes: ['px_scaling'] 
                 }
             };
             
