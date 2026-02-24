@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YEC Report Generator - Professional Edition</title>
+    <title>YEC Report Generator - Colorful & Fun Edition</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -11,197 +11,231 @@
     <!-- html2pdf.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Quicksand:wght@600;700&family=Playfair+Display:wght@800;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%); }
+        body { font-family: 'Inter', sans-serif; background: #fdfdfd; }
+        h1, h2, .font-fun { font-family: 'Quicksand', sans-serif; }
         .serif { font-family: 'Playfair Display', serif; }
+        
+        /* Highlight Stabilo Styles */
+        .hl-green { background-color: #bef264; color: #166534; padding: 2px 4px; border-radius: 2px; font-weight: 700; }
+        .hl-yellow { background-color: #fef08a; color: #854d0e; padding: 2px 4px; border-radius: 2px; font-weight: 700; }
+        .hl-blue { background-color: #bae6fd; color: #0369a1; padding: 2px 4px; border-radius: 2px; font-weight: 700; }
+        .hl-red { background-color: #fecaca; color: #991b1b; padding: 2px 4px; border-radius: 2px; font-weight: 700; }
         
         strong { font-weight: 700; color: #1e1b4b; }
         
-        /* Prevent Page Breaks for PDF */
-        .prevent-split { break-inside: avoid; page-break-inside: avoid; }
+        /* PDF & Preview Optimization */
+        .prevent-split { 
+            break-inside: avoid; 
+            page-break-inside: avoid; 
+        }
+
+        /* Container pratinjau agar tidak terpotong di layar kecil */
+        .preview-area {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-x: auto;
+            background: #f1f5f9;
+            padding: 40px 20px;
+        }
+
+        #report-content {
+            width: 800px; 
+            min-height: 1130px; /* Mendekati rasio A4 */
+            background: white;
+            flex-shrink: 0; /* Menjaga ukuran tetap 800px untuk render PDF */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
 
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; padding: 0; }
-            .report-container { box-shadow: none !important; border: none !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; }
+            #report-content { box-shadow: none !important; border: none !important; margin: 0 !important; }
+            .preview-area { padding: 0; background: white; }
         }
 
-        /* Fancy scrollbar */
+        /* Custom Scrollbar */
         textarea::-webkit-scrollbar { width: 8px; }
         textarea::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        textarea::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        .gradient-header {
-            background: linear-gradient(135deg, #4338ca 0%, #0d9488 100%);
+        .gradient-main {
+            background: linear-gradient(135deg, #f97316 0%, #db2777 50%, #6366f1 100%);
         }
 
-        /* Custom white space handling for mentor notes */
-        .observation-text {
+        .observation-container {
+            text-align: justify;
+            line-height: 1.9;
             white-space: pre-line;
-            line-height: 2;
         }
+
+        .likert-step {
+            transition: all 0.3s ease;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8">
+<body class="min-h-screen">
 
-    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+    <div class="flex flex-col lg:flex-row min-h-screen">
         
         <!-- PANEL INPUT (KIRI) -->
-        <div class="lg:w-1/3 space-y-6 no-print">
-            <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center gap-2 text-indigo-900 font-bold text-lg">
-                    <i data-lucide="layout" class="w-6 h-6 text-indigo-500"></i>
-                    <span>Dashboard Input</span>
+        <div class="lg:w-[420px] w-full bg-white border-r border-slate-200 p-8 space-y-8 no-print overflow-y-auto max-h-screen">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3 text-orange-600 font-bold text-2xl font-fun">
+                    <div class="bg-orange-100 p-2 rounded-xl">
+                        <i data-lucide="palette" class="w-6 h-6"></i>
+                    </div>
+                    <span>YEC Builder</span>
                 </div>
-                <button onclick="resetForm()" class="bg-white/50 hover:bg-white text-slate-500 hover:text-red-500 p-2 rounded-xl transition-all shadow-sm border border-slate-200">
-                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                <button onclick="resetForm()" class="text-slate-400 hover:text-red-500 p-2 transition-all">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <!-- Identitas Siswa -->
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-indigo-50">
-                <h2 class="text-xs font-bold flex items-center gap-2 mb-6 text-indigo-400 uppercase tracking-[0.2em]">
-                    <i data-lucide="user-circle" class="w-4 h-4"></i> Data Peserta
+            <!-- Form Identitas -->
+            <div class="space-y-5">
+                <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <i data-lucide="user" class="w-4 h-4"></i> Informasi Siswa
                 </h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Lengkap</label>
-                        <input id="namaLengkap" type="text" oninput="updatePreview()" class="w-full mt-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-400 transition-all" placeholder="Nama lengkap siswa...">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Panggilan</label>
-                        <input id="namaPanggilan" type="text" oninput="updatePreview()" class="w-full mt-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-400 transition-all" placeholder="Nama panggil...">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Skor Akhir (0-100)</label>
-                        <input id="nilaiAkhir" type="number" oninput="updatePreview()" class="w-full mt-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-400 transition-all" placeholder="Contoh: 90">
-                    </div>
+                <div class="grid gap-4">
+                    <input id="namaLengkap" type="text" oninput="updatePreview()" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 focus:border-orange-300 focus:ring-4 focus:ring-orange-50 rounded-2xl outline-none transition-all font-medium" placeholder="Nama Lengkap">
+                    <input id="namaPanggilan" type="text" oninput="updatePreview()" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 focus:border-orange-300 focus:ring-4 focus:ring-orange-50 rounded-2xl outline-none transition-all font-bold text-orange-600" placeholder="Nama Panggilan">
+                    <input id="nilaiAkhir" type="number" oninput="updatePreview()" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 focus:border-orange-300 focus:ring-4 focus:ring-orange-50 rounded-2xl outline-none transition-all font-black text-2xl text-indigo-600" placeholder="Skor Akhir (0-100)">
                 </div>
             </div>
 
-            <!-- Matriks Skor -->
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-indigo-50">
-                <h2 class="text-xs font-bold flex items-center gap-2 mb-6 text-indigo-400 uppercase tracking-[0.2em]">
-                    <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Skor Kompetensi
+            <!-- Form Skor -->
+            <div class="space-y-5 pt-4">
+                <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <i data-lucide="award" class="w-4 h-4"></i> Level Kompetensi
                 </h2>
-                <div id="skor-container" class="space-y-4">
+                <div id="skor-container" class="space-y-6">
                     <!-- Dinamis via JS -->
                 </div>
             </div>
 
-            <!-- Catatan Mentor (Input) -->
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-indigo-50">
-                <h2 class="text-xs font-bold flex items-center gap-2 mb-2 text-indigo-400 uppercase tracking-[0.2em]">
-                    <i data-lucide="pen-tool" class="w-4 h-4"></i> Catatan Mentor
+            <!-- Form Catatan -->
+            <div class="space-y-4 pt-4 pb-10">
+                <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i> Catatan Mentor
                 </h2>
-                <p class="text-[10px] text-slate-400 mb-4 italic leading-tight">Masukkan catatan Anda di sini. Isi akan ditampilkan persis sama di pratinjau.</p>
-                <textarea id="rawNotes" oninput="updatePreview()" class="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-indigo-400 h-44 resize-none leading-relaxed" placeholder="Tuliskan poin observasi mendalam di sini..."></textarea>
+                <textarea id="rawNotes" oninput="updatePreview()" class="w-full px-5 py-5 bg-slate-50 border border-slate-200 focus:border-teal-300 focus:ring-4 focus:ring-teal-50 rounded-[1.5rem] text-sm outline-none h-48 resize-none leading-relaxed transition-all" placeholder="Tuliskan perkembangan siswa secara detail..."></textarea>
             </div>
         </div>
 
         <!-- PRATINJAU LAPORAN (KANAN) -->
-        <div class="flex-1 report-container bg-white rounded-[3rem] overflow-hidden shadow-2xl min-h-[1100px] border border-indigo-100 relative">
+        <div class="flex-1 preview-area no-scrollbar relative">
             
-            <div class="absolute top-8 right-8 z-50 no-print flex gap-3">
-                <button onclick="window.print()" class="bg-white/80 backdrop-blur text-slate-600 p-3 rounded-2xl shadow-xl hover:bg-white transition-all border border-slate-100">
-                    <i data-lucide="printer" class="w-5 h-5"></i>
+            <!-- Tombol Aksi Melayang -->
+            <div class="fixed bottom-8 right-8 z-50 no-print flex flex-col gap-4">
+                <button onclick="window.print()" class="bg-white text-slate-600 p-4 rounded-2xl shadow-2xl hover:bg-slate-50 transition-all border border-slate-200 group">
+                    <i data-lucide="printer" class="w-6 h-6 group-hover:scale-110"></i>
                 </button>
-                <button onclick="downloadPDF()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl shadow-xl transition-all flex items-center gap-2 font-bold text-sm transform hover:-translate-y-1">
-                    <i data-lucide="file-check" class="w-5 h-5"></i> Simpan Laporan
+                <button onclick="downloadPDF()" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl shadow-2xl transition-all flex items-center gap-3 font-bold transform hover:-translate-y-1 text-sm">
+                    <i data-lucide="file-down" class="w-6 h-6"></i> Simpan PDF
                 </button>
             </div>
 
-            <div id="report-content" class="relative bg-white min-h-full">
-                <!-- Watermark -->
-                <div class="absolute inset-0 pointer-events-none overflow-hidden flex flex-col justify-around items-center opacity-[0.03] z-0 select-none">
-                    <div class="text-[14rem] font-black -rotate-[30deg] whitespace-nowrap text-indigo-900">YEC.CO.ID</div>
-                    <div class="text-[14rem] font-black -rotate-[30deg] whitespace-nowrap text-indigo-900">YEC.CO.ID</div>
-                </div>
-
-                <div class="relative z-10">
-                    <!-- Header -->
-                    <div class="gradient-header p-20 text-center text-white relative">
-                        <div class="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none overflow-hidden">
-                            <div class="absolute top-10 right-10 w-64 h-64 bg-white rounded-full blur-3xl opacity-30"></div>
-                            <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-teal-300 rounded-full blur-3xl opacity-40"></div>
+            <div id="report-content" class="rounded-[2.5rem] overflow-hidden relative">
+                
+                <div class="relative z-10 min-h-full flex flex-col text-slate-800">
+                    <!-- Colorful Header -->
+                    <div class="gradient-main p-16 text-center text-white relative prevent-split">
+                        <div class="absolute inset-0 opacity-10 pointer-events-none">
+                            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0 100 C 20 0 50 0 100 100 Z" fill="white"></path></svg>
                         </div>
-                        <h1 class="serif text-4xl md:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-sm text-white">Monthly Observation Report</h1>
-                        <div class="inline-flex items-center gap-3 px-6 py-2 bg-white/20 backdrop-blur-lg rounded-full border border-white/30 text-white">
-                            <span class="w-2 h-2 bg-teal-300 rounded-full animate-pulse shadow-[0_0_8px_#5eead4]"></span>
-                            <span class="tracking-[0.4em] uppercase text-[10px] font-black text-indigo-50">Public Speaking Anak Reguler</span>
+                        <h1 class="text-3xl md:text-4xl font-black mb-3 tracking-tight uppercase drop-shadow-lg font-fun">Monthly Observation Report</h1>
+                        <div class="inline-flex items-center gap-4 px-6 py-2 bg-black/10 backdrop-blur-md rounded-full border border-white/20 font-fun">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
+                            <span class="tracking-[0.3em] uppercase text-[10px] font-bold">Public Speaking Anak Reguler</span>
                         </div>
                     </div>
 
-                    <!-- Identity Bubble -->
-                    <div class="px-12 -mt-10">
-                        <div class="bg-white rounded-[2.5rem] shadow-xl p-10 grid grid-cols-2 gap-8 border border-indigo-50">
-                            <div class="border-r border-slate-100 pr-4">
-                                <p class="text-[10px] text-indigo-300 uppercase font-black tracking-[0.2em] mb-2">Nama Lengkap Siswa</p>
-                                <p id="view-namaLengkap" class="text-2xl font-bold text-slate-800 leading-tight">—</p>
+                    <!-- Profile Section -->
+                    <div class="px-12 -mt-8 prevent-split">
+                        <div class="bg-white rounded-[2.5rem] shadow-xl p-8 flex items-center justify-between border border-slate-100">
+                            <div class="flex-1">
+                                <p class="text-[9px] text-slate-400 uppercase font-black tracking-[0.3em] mb-1">Nama Lengkap</p>
+                                <p id="view-namaLengkap" class="text-xl font-bold text-slate-800 truncate">—</p>
                             </div>
-                            <div class="pl-4 text-left">
-                                <p class="text-[10px] text-indigo-300 uppercase font-black tracking-[0.2em] mb-2">Nama Panggilan</p>
-                                <p id="view-namaPanggilan" class="text-3xl font-black text-indigo-600 leading-tight">—</p>
+                            <div class="w-px h-12 bg-slate-100 mx-6"></div>
+                            <div class="flex-1 text-center">
+                                <p class="text-[9px] text-indigo-400 uppercase font-black tracking-[0.3em] mb-1">Nama Panggilan</p>
+                                <p id="view-namaPanggilan" class="text-3xl font-black text-orange-500 tracking-tight leading-none">—</p>
+                            </div>
+                            <div class="w-px h-12 bg-slate-100 mx-6"></div>
+                            <div class="flex-1 text-right">
+                                <p class="text-[9px] text-teal-500 uppercase font-black tracking-[0.3em] mb-1">Skor Akhir</p>
+                                <div class="flex items-baseline justify-end">
+                                    <span id="view-nilaiAkhir" class="text-5xl font-black text-indigo-950 leading-none">0</span>
+                                    <span class="text-lg font-bold text-slate-300 ml-1">/100</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Matrix Section -->
-                    <div class="p-12 prevent-split">
+                    <!-- Kompetensi Section -->
+                    <div class="p-12 prevent-split flex-grow">
                         <div class="flex items-center gap-4 mb-10">
-                            <div class="h-10 w-1.5 bg-teal-400 rounded-full"></div>
-                            <h2 class="serif text-3xl font-bold text-slate-800">Matriks Capaian Kompetensi</h2>
+                            <div class="h-8 w-2 bg-orange-400 rounded-full shadow-sm"></div>
+                            <h2 class="text-2xl font-black text-indigo-950 uppercase tracking-tighter">Matriks Capaian Kompetensi</h2>
                         </div>
-                        <div id="progress-bars" class="grid grid-cols-1 gap-7">
-                            <!-- Render via JS -->
+                        <div id="progress-visuals" class="grid grid-cols-2 gap-x-12 gap-y-10">
+                            <!-- JS Rendered -->
                         </div>
                         
-                        <div class="mt-14 bg-gradient-to-r from-indigo-50 via-white to-teal-50 p-12 rounded-[3rem] flex items-center justify-between border border-indigo-100 shadow-inner relative overflow-hidden">
-                            <div class="absolute top-0 right-0 w-32 h-32 bg-teal-400/5 rounded-full -mr-16 -mt-16"></div>
-                            <div class="space-y-1 relative z-10">
-                                <p class="text-[11px] font-black text-indigo-400 uppercase tracking-[0.3em]">Indeks Kumulatif</p>
-                                <span class="text-slate-700 font-bold text-2xl uppercase italic tracking-tight">Evaluasi Akhir Sesi</span>
+                        <!-- Ringkasan Nilai -->
+                        <div class="mt-12 bg-slate-50 border border-slate-100 p-8 rounded-[2rem] flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                                    <i data-lucide="trending-up" class="w-8 h-8"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Performance Index</p>
+                                    <h3 class="text-xl font-bold text-indigo-900">Evaluasi Sesi Belajar</h3>
+                                </div>
                             </div>
-                            <div class="text-right relative z-10">
-                                <span id="view-nilaiAkhir" class="text-8xl font-black text-indigo-900 tracking-tighter drop-shadow-md">0</span>
-                                <span class="text-3xl font-light text-teal-500 ml-2">/100</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Observation Text Section -->
-                    <div class="p-12 bg-white border-t border-slate-50 prevent-split">
-                        <div class="flex items-center gap-4 mb-10">
-                            <div class="h-10 w-1.5 bg-indigo-500 rounded-full"></div>
-                            <h2 class="serif text-3xl font-bold text-slate-800">Catatan Observasi</h2>
-                        </div>
-                        
-                        <div id="view-notes" class="observation-text text-slate-600 text-[17px] font-light px-4">
-                            <div class="py-24 text-center border-3 border-dashed border-indigo-50 rounded-[3rem] bg-slate-50/30">
-                                <p class="italic text-indigo-300 font-medium">Catatan mentor akan muncul di sini sesuai input Anda.</p>
+                            <div class="text-right">
+                                <span id="view-totalScore" class="text-6xl font-black text-indigo-950 tracking-tighter">0</span>
+                                <span class="text-2xl font-bold text-orange-400">%</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Footer Section -->
-                    <div class="p-16 bg-slate-50 border-t border-slate-100 flex flex-col md:flex-row justify-between items-end gap-12 prevent-split">
-                        <div class="space-y-6">
-                            <div class="flex items-center gap-3 bg-white px-5 py-3 rounded-full shadow-sm border border-indigo-50 inline-flex">
-                                <i data-lucide="award" class="w-5 h-5 text-teal-500"></i>
-                                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-900">Academic Progress Verified</span>
+                    <!-- Catatan Section -->
+                    <div class="p-12 pt-0 prevent-split">
+                        <div class="bg-indigo-950 rounded-[3rem] p-12 text-white relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-10 -mt-10"></div>
+                            <div class="flex items-center gap-4 mb-8">
+                                <div class="h-8 w-2 bg-teal-400 rounded-full"></div>
+                                <h2 class="text-2xl font-black uppercase tracking-tighter">Catatan Observasi</h2>
                             </div>
-                            <p class="text-[11px] text-slate-400 italic max-w-sm leading-relaxed">
-                                Laporan ini disusun secara profesional oleh tim instruktur YEC.CO.ID untuk memantau perkembangan bakat komunikasi anak melalui pendekatan pedagogi modern.
-                            </p>
+                            <div id="view-notes" class="observation-container text-indigo-50/90 text-[16px] font-normal px-2">
+                                <p class="italic text-indigo-300/50 text-center py-6">Silakan tuliskan evaluasi mentor pada panel input.</p>
+                            </div>
                         </div>
-                        <div class="text-center group min-w-[280px]">
-                            <div class="mb-6 h-12 flex flex-col items-center justify-center opacity-30">
-                                <span class="font-serif text-indigo-900/40 text-sm tracking-widest uppercase font-bold italic border-b border-indigo-100 px-4 whitespace-nowrap text-white">E-Authorized Signature</span>
+                    </div>
+
+                    <!-- Footer Signature -->
+                    <div class="p-12 mt-auto prevent-split">
+                        <div class="flex justify-between items-end border-t-2 border-dashed border-slate-100 pt-10">
+                            <div class="max-w-[300px]">
+                                <div class="flex items-center gap-2 mb-4">
+                                    <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+                                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">Verified by YEC.CO.ID</span>
+                                </div>
+                                <p class="text-[10px] text-slate-400 italic leading-relaxed">
+                                    Laporan ini disusun secara profesional untuk mendukung transparansi perkembangan bakat komunikasi anak.
+                                </p>
                             </div>
-                            <div class="w-full h-1 bg-gradient-to-r from-transparent via-indigo-200 to-transparent mb-4"></div>
-                            <p class="text-[12px] font-black text-slate-800 uppercase tracking-[0.3em]">Instruktur Public Speaking</p>
-                            <p class="text-[10px] text-indigo-400 mt-2 font-black tracking-widest text-center">YEC.CO.ID PROFESSIONAL EDUCATION</p>
+                            <div class="text-center min-w-[200px]">
+                                <div class="w-full h-px bg-slate-200 mb-4"></div>
+                                <p class="text-[11px] font-black text-slate-800 uppercase tracking-widest font-fun">Instruktur Utama</p>
+                                <p class="text-[9px] text-indigo-500 mt-1 font-black">YEC PROFESSIONAL EDUCATION</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -210,56 +244,51 @@
     </div>
 
     <script>
-        // --- DATA STATE ---
+        // --- STATE & CONFIG ---
         let state = {
             namaLengkap: '', 
             namaPanggilan: '', 
             nilaiAkhir: '', 
             rawNotes: '',
             skor: {
-                artikulasi: 3,
-                interaction: 3,
-                ekspresi: 3,
-                inklusivitas: 2,
-                kecemasan: 3
+                vokal: 3,
+                respon: 3,
+                tubuh: 3,
+                sosial: 2,
+                mental: 3
             }
         };
 
-        const labels = {
-            artikulasi: "Artikulasi & Proyeksi Suara",
-            interaction: "Interaksi & Respons (Engagement)",
-            ekspresi: "Ekspresi & Penguasaan Ruang",
-            inklusivitas: "Inklusivitas & Kontrol Kelompok",
-            kecemasan: "Manajemen Kecemasan"
+        const config = {
+            vokal: { label: "Artikulasi & Proyeksi", color: "#f97316", icon: "mic" },
+            respon: { label: "Interaksi & Respons", color: "#6366f1", icon: "message-square" },
+            tubuh: { label: "Bahasa Tubuh", color: "#10b981", icon: "user-check" },
+            sosial: { label: "Dinamika Kelompok", color: "#ec4899", icon: "users" },
+            mental: { label: "Kontrol Kecemasan", color: "#0ea5e9", icon: "shield" }
         };
 
-        const colors = {
-            artikulasi: "bg-indigo-500",
-            interaction: "bg-teal-500",
-            ekspresi: "bg-amber-400",
-            inklusivitas: "bg-rose-400",
-            kecemasan: "bg-sky-400"
-        };
-
-        // --- UI CORE ---
+        // --- UI RENDER ---
         function renderInputs() {
             const container = document.getElementById('skor-container');
-            container.innerHTML = Object.keys(state.skor).map(key => `
-                <div class="flex items-center justify-between group">
-                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-indigo-400 transition-colors">${key}</label>
-                    <div class="flex gap-1" data-aspek="${key}">
+            container.innerHTML = Object.entries(config).map(([key, item]) => `
+                <div class="space-y-3">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                        <i data-lucide="${item.icon}" class="w-3.5 h-3.5"></i> ${item.label}
+                    </label>
+                    <div class="flex gap-2" data-aspek="${key}">
                         ${[1, 2, 3, 4].map(n => `
-                            <button onclick="setSkor('${key}', ${n})" class="skor-btn w-9 h-9 rounded-xl text-xs font-bold transition-all ${state.skor[key] === n ? 'bg-indigo-600 text-white shadow-lg scale-110' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'}">${n}</button>
+                            <button onclick="setSkor('${key}', ${n})" class="skor-btn flex-1 py-2.5 rounded-xl text-xs font-bold transition-all border-2 ${state.skor[key] === n ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg' : 'bg-white border-slate-100 text-slate-400 hover:border-indigo-200'}">${n}</button>
                         `).join('')}
                     </div>
                 </div>
             `).join('');
+            lucide.createIcons();
         }
 
         function setSkor(aspek, val) {
             state.skor[aspek] = val;
             renderInputs();
-            renderProgressBars();
+            updateVisuals();
         }
 
         function updatePreview() {
@@ -271,64 +300,87 @@
             document.getElementById('view-namaLengkap').innerText = state.namaLengkap || "—";
             document.getElementById('view-namaPanggilan').innerText = state.namaPanggilan || "—";
             document.getElementById('view-nilaiAkhir').innerText = state.nilaiAkhir || "0";
+            document.getElementById('view-totalScore').innerText = state.nilaiAkhir || "0";
             
-            // Render notes exactly as typed
-            const notesView = document.getElementById('view-notes');
-            if(state.rawNotes.trim() === "") {
-                notesView.innerHTML = `
-                    <div class="py-24 text-center border-3 border-dashed border-indigo-50 rounded-[3rem] bg-slate-50/30">
-                        <p class="italic text-indigo-300 font-medium">Catatan mentor akan muncul di sini sesuai input Anda.</p>
-                    </div>
-                `;
-            } else {
-                notesView.innerText = state.rawNotes;
-            }
-
-            renderProgressBars();
+            processNotesDisplay();
+            updateVisuals();
         }
 
-        function renderProgressBars() {
-            const container = document.getElementById('progress-bars');
-            container.innerHTML = Object.entries(state.skor).map(([key, val]) => {
-                const percentage = (val / 4) * 100;
-                let barColor = colors[key]; 
-                if (val === 1) barColor = 'bg-red-500';
-                
+        function processNotesDisplay() {
+            const container = document.getElementById('view-notes');
+            let text = state.rawNotes.trim();
+
+            if (!text) {
+                container.innerHTML = '<p class="italic text-indigo-300/50 text-center py-10">Catatan mentor akan tertulis di sini.</p>';
+                return;
+            }
+
+            const rules = [
+                { reg: /\b(bagus|baik|unggul|hebat|luar biasa|percaya diri|jernih|stabil|tepat|natural|lancar|berani)\b/gi, class: 'hl-green' },
+                { reg: /\b(kurang|belum|perlu|lambat|cepat|lemah|tidak stabil|fidgeting|gelisah|malu|ragu)\b/gi, class: 'hl-red' },
+                { reg: /\b(progres|kemajuan|berkembang|meningkat|mulai|upaya|aktif)\b/gi, class: 'hl-blue' },
+                { reg: /\b(latihan|fokus|perhatian|rekomendasi|saran|lanjutkan|rutin|disarankan)\b/gi, class: 'hl-yellow' }
+            ];
+
+            let html = text.split('\n').map(p => {
+                if (!p.trim()) return '';
+                let processedPara = p;
+                processedPara = processedPara.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+                rules.forEach(rule => {
+                    processedPara = processedPara.replace(rule.reg, `<span class="${rule.class}">$1</span>`);
+                });
+                return `<p class="mb-4">${processedPara}</p>`;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        function updateVisuals() {
+            const container = document.getElementById('progress-visuals');
+            container.innerHTML = Object.entries(config).map(([key, item]) => {
+                const val = state.skor[key];
                 return `
-                    <div class="group prevent-split">
-                        <div class="flex justify-between mb-2 items-end px-1">
-                            <span class="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em] group-hover:text-indigo-600 transition-colors">${labels[key]}</span>
-                            <span class="text-xs font-black bg-white border border-indigo-100 px-3 py-1 rounded-full shadow-sm text-slate-800">${val} / 4</span>
+                    <div class="prevent-split">
+                        <div class="flex justify-between mb-3 items-center">
+                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">${item.label}</span>
+                            <div class="flex gap-1">
+                                ${[1, 2, 3, 4].map(i => `
+                                    <div class="w-4 h-1.5 rounded-full ${i <= val ? '' : 'bg-slate-100'}" style="${i <= val ? 'background-color:' + item.color : ''}"></div>
+                                `).join('')}
+                            </div>
                         </div>
-                        <div class="w-full bg-slate-100 rounded-full h-4 p-1 overflow-hidden border border-indigo-50 shadow-inner">
-                            <div class="h-full rounded-full transition-all duration-1000 ease-out ${barColor} shadow-[0_0_12px_-2px_rgba(0,0,0,0.1)]" style="width: ${percentage}%"></div>
+                        <div class="flex items-center gap-2">
+                            ${[1, 2, 3, 4].map(i => {
+                                const isActive = i <= val;
+                                const baseStyle = isActive ? `background-color: ${item.color}; border-color: ${item.color};` : 'background-color: #f8fafc; border-color: #f1f5f9;';
+                                return `<div class="likert-step flex-1 h-6 rounded-lg border-2 shadow-sm transition-all" style="${baseStyle} opacity: ${isActive ? '1' : '0.1'}"></div>`;
+                            }).join('')}
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // --- UTILS ---
         function resetForm() {
-            if (confirm("Reset seluruh data input?")) location.reload();
+            if (confirm("Hapus semua data input?")) location.reload();
         }
 
         function downloadPDF() {
             const element = document.getElementById('report-content');
             const opt = {
-                margin: [0.2, 0.2, 0.2, 0.2], // Standard margins
-                filename: `Report_YEC_${state.namaPanggilan || 'Siswa'}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
+                margin: 0,
+                filename: `Report_YEC_${state.namaPanggilan || 'Student'}.pdf`,
+                image: { type: 'jpeg', quality: 1 },
                 html2canvas: { 
                     scale: 2, 
                     useCORS: true, 
-                    letterRendering: true,
-                    scrollY: 0
+                    letterRendering: true, 
+                    scrollY: 0,
+                    width: 800 
                 },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                jsPDF: { unit: 'px', format: [800, 1131], orientation: 'portrait', hotfixes: ['px_scaling'] }
             };
             
-            // Scroll to top before generating to avoid offset issues
             window.scrollTo(0,0);
             html2pdf().set(opt).from(element).save();
         }
@@ -336,7 +388,7 @@
         window.onload = () => { 
             lucide.createIcons(); 
             renderInputs(); 
-            renderProgressBars(); 
+            updatePreview(); 
         };
     </script>
 </body>
