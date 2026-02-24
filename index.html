@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YEC Report Generator - Colorful Elegant Edition</title>
+    <title>YEC Report Generator - Professional Edition</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -15,12 +15,6 @@
     <style>
         body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%); }
         .serif { font-family: 'Playfair Display', serif; }
-        
-        /* Highlight Styles - Cheerful yet readable */
-        .hl-blue { background-color: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 6px; font-weight: 600; }
-        .hl-red { background-color: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 6px; font-weight: 600; }
-        .hl-green { background-color: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 6px; font-weight: 600; }
-        .hl-yellow { background-color: #fef9c3; color: #854d0e; padding: 2px 6px; border-radius: 6px; font-weight: 600; }
         
         strong { font-weight: 700; color: #1e1b4b; }
         
@@ -41,6 +35,12 @@
         .gradient-header {
             background: linear-gradient(135deg, #4338ca 0%, #0d9488 100%);
         }
+
+        /* Custom white space handling for mentor notes */
+        .observation-text {
+            white-space: pre-line;
+            line-height: 2;
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8">
@@ -51,8 +51,8 @@
         <div class="lg:w-1/3 space-y-6 no-print">
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2 text-indigo-900 font-bold text-lg">
-                    <i data-lucide="sparkles" class="w-6 h-6 text-indigo-500"></i>
-                    <span>Dashboard Instruktur</span>
+                    <i data-lucide="layout" class="w-6 h-6 text-indigo-500"></i>
+                    <span>Dashboard Input</span>
                 </div>
                 <button onclick="resetForm()" class="bg-white/50 hover:bg-white text-slate-500 hover:text-red-500 p-2 rounded-xl transition-all shadow-sm border border-slate-200">
                     <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
@@ -90,18 +90,13 @@
                 </div>
             </div>
 
-            <!-- Observasi Instruktur -->
+            <!-- Catatan Mentor (Input) -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-indigo-50">
                 <h2 class="text-xs font-bold flex items-center gap-2 mb-2 text-indigo-400 uppercase tracking-[0.2em]">
-                    <i data-lucide="message-circle" class="w-4 h-4"></i> Catatan Mentor
+                    <i data-lucide="pen-tool" class="w-4 h-4"></i> Catatan Mentor
                 </h2>
-                <p class="text-[10px] text-slate-400 mb-4 italic leading-tight">Masukkan poin perilaku. Sistem akan menyusun narasi profesional & analitis.</p>
-                <textarea id="rawNotes" class="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-indigo-400 h-40 resize-none leading-relaxed" placeholder="Contoh: Artikulasi jernih. Belum stabil di voice level. Berani bertanya namun pasif di kelompok..."></textarea>
-                
-                <button onclick="generateElaboration()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-lg transform active:scale-95">
-                    <i data-lucide="wand-2" class="w-5 h-5"></i>
-                    <span>Proses Laporan</span>
-                </button>
+                <p class="text-[10px] text-slate-400 mb-4 italic leading-tight">Masukkan catatan Anda di sini. Isi akan ditampilkan persis sama di pratinjau.</p>
+                <textarea id="rawNotes" oninput="updatePreview()" class="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-indigo-400 h-44 resize-none leading-relaxed" placeholder="Tuliskan poin observasi mendalam di sini..."></textarea>
             </div>
         </div>
 
@@ -125,14 +120,14 @@
                 </div>
 
                 <div class="relative z-10">
-                    <!-- Cheerful Header -->
+                    <!-- Header -->
                     <div class="gradient-header p-20 text-center text-white relative">
                         <div class="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none overflow-hidden">
                             <div class="absolute top-10 right-10 w-64 h-64 bg-white rounded-full blur-3xl opacity-30"></div>
                             <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-teal-300 rounded-full blur-3xl opacity-40"></div>
                         </div>
-                        <h1 class="serif text-4xl md:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-sm">Monthly Observation Report</h1>
-                        <div class="inline-flex items-center gap-3 px-6 py-2 bg-white/20 backdrop-blur-lg rounded-full border border-white/30">
+                        <h1 class="serif text-4xl md:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-sm text-white">Monthly Observation Report</h1>
+                        <div class="inline-flex items-center gap-3 px-6 py-2 bg-white/20 backdrop-blur-lg rounded-full border border-white/30 text-white">
                             <span class="w-2 h-2 bg-teal-300 rounded-full animate-pulse shadow-[0_0_8px_#5eead4]"></span>
                             <span class="tracking-[0.4em] uppercase text-[10px] font-black text-indigo-50">Public Speaking Anak Reguler</span>
                         </div>
@@ -145,7 +140,7 @@
                                 <p class="text-[10px] text-indigo-300 uppercase font-black tracking-[0.2em] mb-2">Nama Lengkap Siswa</p>
                                 <p id="view-namaLengkap" class="text-2xl font-bold text-slate-800 leading-tight">—</p>
                             </div>
-                            <div class="pl-4">
+                            <div class="pl-4 text-left">
                                 <p class="text-[10px] text-indigo-300 uppercase font-black tracking-[0.2em] mb-2">Nama Panggilan</p>
                                 <p id="view-namaPanggilan" class="text-3xl font-black text-indigo-600 leading-tight">—</p>
                             </div>
@@ -175,41 +170,38 @@
                         </div>
                     </div>
 
-                    <!-- Observation Narrative -->
+                    <!-- Observation Text Section -->
                     <div class="p-12 bg-white border-t border-slate-50 prevent-split">
                         <div class="flex items-center gap-4 mb-10">
                             <div class="h-10 w-1.5 bg-indigo-500 rounded-full"></div>
                             <h2 class="serif text-3xl font-bold text-slate-800">Catatan Observasi</h2>
                         </div>
                         
-                        <div id="ai-content" class="space-y-10 text-slate-600 text-[16px] leading-[2.1] text-justify font-light px-4">
+                        <div id="view-notes" class="observation-text text-slate-600 text-[17px] font-light px-4">
                             <div class="py-24 text-center border-3 border-dashed border-indigo-50 rounded-[3rem] bg-slate-50/30">
-                                <div class="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <i data-lucide="clipboard-list" class="w-10 h-10 text-indigo-200"></i>
-                                </div>
-                                <p class="italic text-indigo-300 font-medium max-w-sm mx-auto">Tulis poin observasi dan klik tombol di panel kiri untuk merangkai catatan analisis mendalam.</p>
+                                <p class="italic text-indigo-300 font-medium">Catatan mentor akan muncul di sini sesuai input Anda.</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Footer Section - Page break avoided -->
+                    <!-- Footer Section -->
                     <div class="p-16 bg-slate-50 border-t border-slate-100 flex flex-col md:flex-row justify-between items-end gap-12 prevent-split">
                         <div class="space-y-6">
                             <div class="flex items-center gap-3 bg-white px-5 py-3 rounded-full shadow-sm border border-indigo-50 inline-flex">
-                                <i data-lucide="shield-check" class="w-5 h-5 text-teal-500"></i>
-                                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-900">Academic Integrity Verified</span>
+                                <i data-lucide="award" class="w-5 h-5 text-teal-500"></i>
+                                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-900">Academic Progress Verified</span>
                             </div>
                             <p class="text-[11px] text-slate-400 italic max-w-sm leading-relaxed">
-                                Laporan ini disusun secara profesional oleh tim instruktur YEC.CO.ID untuk memantau perkembangan bakat komunikasi anak melalui pendekatan psikologi edukasi modern.
+                                Laporan ini disusun secara profesional oleh tim instruktur YEC.CO.ID untuk memantau perkembangan bakat komunikasi anak melalui pendekatan pedagogi modern.
                             </p>
                         </div>
                         <div class="text-center group min-w-[280px]">
-                            <div class="mb-6 h-16 flex flex-col items-center justify-center opacity-30">
-                                <span class="font-serif text-indigo-900/40 text-sm tracking-widest uppercase font-bold italic border-b border-indigo-100 px-4">E-Authorized Signature</span>
+                            <div class="mb-6 h-12 flex flex-col items-center justify-center opacity-30">
+                                <span class="font-serif text-indigo-900/40 text-sm tracking-widest uppercase font-bold italic border-b border-indigo-100 px-4 whitespace-nowrap text-white">E-Authorized Signature</span>
                             </div>
                             <div class="w-full h-1 bg-gradient-to-r from-transparent via-indigo-200 to-transparent mb-4"></div>
                             <p class="text-[12px] font-black text-slate-800 uppercase tracking-[0.3em]">Instruktur Public Speaking</p>
-                            <p class="text-[10px] text-indigo-400 mt-2 font-black tracking-widest">YEC.CO.ID PROFESSIONAL EDUCATION</p>
+                            <p class="text-[10px] text-indigo-400 mt-2 font-black tracking-widest text-center">YEC.CO.ID PROFESSIONAL EDUCATION</p>
                         </div>
                     </div>
                 </div>
@@ -220,7 +212,10 @@
     <script>
         // --- DATA STATE ---
         let state = {
-            namaLengkap: '', namaPanggilan: '', nilaiAkhir: '', rawNotes: '',
+            namaLengkap: '', 
+            namaPanggilan: '', 
+            nilaiAkhir: '', 
+            rawNotes: '',
             skor: {
                 artikulasi: 3,
                 interaction: 3,
@@ -276,6 +271,19 @@
             document.getElementById('view-namaLengkap').innerText = state.namaLengkap || "—";
             document.getElementById('view-namaPanggilan').innerText = state.namaPanggilan || "—";
             document.getElementById('view-nilaiAkhir').innerText = state.nilaiAkhir || "0";
+            
+            // Render notes exactly as typed
+            const notesView = document.getElementById('view-notes');
+            if(state.rawNotes.trim() === "") {
+                notesView.innerHTML = `
+                    <div class="py-24 text-center border-3 border-dashed border-indigo-50 rounded-[3rem] bg-slate-50/30">
+                        <p class="italic text-indigo-300 font-medium">Catatan mentor akan muncul di sini sesuai input Anda.</p>
+                    </div>
+                `;
+            } else {
+                notesView.innerText = state.rawNotes;
+            }
+
             renderProgressBars();
         }
 
@@ -300,89 +308,6 @@
             }).join('');
         }
 
-        // --- ANALYTICAL OFFLINE ENGINE ---
-        function generateElaboration() {
-            const n = state.namaPanggilan || "Siswa";
-            const raw = state.rawNotes.toLowerCase();
-            
-            if (!state.namaPanggilan || !state.rawNotes) {
-                alert("Harap lengkapi Nama Panggilan dan Observasi Instruktur.");
-                return;
-            }
-
-            const paragraphs = [
-                analyzeAnxiety(n, state.skor.kecemasan, raw),
-                analyzeVocal(n, state.skor.artikulasi, raw),
-                analyzeInteraction(n, state.skor.interaction, raw),
-                analyzeBodyLanguage(n, state.skor.ekspresi, raw),
-                analyzeSocial(n, state.skor.inklusivitas, raw),
-                renderFinalConclusion(n, state.skor, raw)
-            ];
-
-            const container = document.getElementById('ai-content');
-            container.innerHTML = paragraphs.map(p => `
-                <p class="relative pl-10 before:content-[''] before:absolute before:left-0 before:top-4 before:w-2 before:h-2 before:bg-indigo-300 before:rounded-full before:shadow-sm">
-                    ${p}
-                </p>
-            `).join('');
-            
-            lucide.createIcons();
-        }
-
-        function analyzeAnxiety(n, s, raw) {
-            let text = "";
-            if (s >= 4) text = `Evaluasi pada aspek manajemen kecemasan menunjukkan bahwa ${n} telah memiliki <span class="hl-green">stabilitas emosional yang sangat matang</span>. Ia mampu bertransformasi menjadi pusat perhatian tanpa menunjukkan hambatan psikologis yang berarti.`;
-            else if (s >= 3) text = `Secara kualitatif, tingkat kepercayaan diri ${n} berada pada level <span class="hl-blue">cukup stabil</span>. Meskipun terdapat jeda sejenak saat memulai, resiliensi mentalnya memungkinkan ${n} untuk tetap mengendalikan jalannya sesi bicara secara mandiri.`;
-            else text = `Kami mengidentifikasi adanya <span class="hl-red">tantangan pada regulasi ketenangan</span> ${n}. Munculnya kegugupan yang cukup intens berdampak pada alur berpikir yang terkadang tidak linear saat berada di depan audiens.`;
-
-            if (raw.includes("fidgeting") || raw.includes("gelisah")) text += ` Secara detail, munculnya gerakan non-fungsional (fidgeting) merupakan manifestasi dari tekanan panggung yang masih memerlukan intervensi teknik relaksasi rutin.`;
-            return text;
-        }
-
-        function analyzeVocal(n, s, raw) {
-            let text = "";
-            if (s >= 4) text = `Dalam dimensi teknis vokal, ${n} mencapai <span class="hl-green">proyeksi suara yang jernih dan bertenaga</span>. Akurasi artikulasi pada setiap suku kata diproduksi dengan energi yang konstan, memastikan pesan menjangkau jarak ideal 2-3 meter secara efektif.`;
-            else if (s >= 3) text = `Produksi suara ${n} secara umum <span class="hl-blue">sudah mencapai standar kejelasan yang baik</span>. Namun, terdapat catatan kritis untuk menjaga konsistensi volume agar tidak terjadi penurunan tenaga (vocal fry) di akhir kalimat panjang.`;
-            else text = `Observasi mendalam menunjukkan <span class="hl-red">kelemahan pada jangkauan proyeksi suara</span>. Kurangnya dukungan pernapasan diafragma menyebabkan pesan yang disampaikan ${n} terdengar kurang otoritatif dan sulit ditangkap secara utuh.`;
-
-            if (raw.includes("cepat") || raw.includes("buru")) text += ` Secara spesifik, ${n} perlu melatih kontrol tempo bicaranya agar tidak terburu-buru, sehingga audiens memiliki waktu untuk mencerna informasi secara analitis.`;
-            return text;
-        }
-
-        function analyzeInteraction(n, s, raw) {
-            let text = "";
-            if (s >= 3) text = `Aspek interaksi sosial menunjukkan bahwa ${n} adalah komunikator yang <span class="hl-blue">responsif dan empatik</span>. Ia mampu mendengarkan aktif sebelum memberikan tanggapan, yang mengindikasikan adanya pemahaman struktur komunikasi dua arah yang fungsional.`;
-            else text = `Daya lekat (engagement) ${n} terhadap audiens <span class="hl-yellow">cenderung masih bersifat reaktif/pasif</span>. Inisiatif untuk menggerakkan alur diskusi belum muncul secara organik, di mana ia masih menunggu stimulus luar sebelum memberikan respon.`;
-
-            if (raw.includes("tanya") || raw.includes("jawab")) text += ` Keberaniannya dalam menjawab pertanyaan secara terukur merupakan progres signifikan yang patut dipertahankan melalui latihan simulasi tanya-jawab.`;
-            return text;
-        }
-
-        function analyzeBodyLanguage(n, s, raw) {
-            let text = "";
-            if (s >= 3) text = `Penggunaan bahasa tubuh ${n} sudah mulai menunjukkan <span class="hl-blue">gestur yang natural dan fungsional</span>. Koordinasi postur tubuh yang tegak memperkuat pesan verbalnya, meskipun eksplorasi penggunaan ruang panggung masih bisa dipertajam lagi.`;
-            else text = `Penampilan visual ${n} <span class="hl-red">masih terasa statis dan kaku</span>. Minimnya sinkronisasi antara pesan verbal dengan ekspresi non-verbal (bahasa tubuh) menyebabkan presentasinya kehilangan daya tarik emosional bagi pendengar.`;
-
-            if (raw.includes("mata") || raw.includes("pandang")) text += ` Kami sangat menekankan pentingnya distribusi kontak mata secara merata (eye contact mapping) agar setiap individu dalam audiens merasa dilibatkan secara emosional.`;
-            return text;
-        }
-
-        function analyzeSocial(n, s, raw) {
-            let text = "";
-            if (s >= 3) text = `Dalam dinamika kelompok, kehadiran ${n} memberikan <span class="hl-green">dampak sosial yang inklusif</span>. Ia memiliki fleksibilitas bicara yang baik saat berhadapan dengan berbagai karakter teman sebaya, yang merupakan embrio kepemimpinan yang baik.`;
-            else text = `Terkait kontrol kelompok, ${n} tampak <span class="hl-yellow">masih berada di zona nyaman pribadi</span>. Kurangnya inisiatif untuk merangkul anggota kelompok yang lebih pasif membuat kehadirannya belum dirasakan secara dominan dalam tim.`;
-
-            if (raw.includes("diam") || raw.includes("pasif")) text += ` Dibutuhkan stimulasi lebih lanjut agar ${n} berani mengambil peran sebagai moderator atau penggerak dalam diskusi kolaboratif tanpa rasa sungkan.`;
-            return text;
-        }
-
-        function renderFinalConclusion(n, s, raw) {
-            const total = Object.values(s).reduce((a, b) => a + b, 0);
-            let summary = total >= 16 ? `<span class="hl-green">sangat memuaskan</span> dengan potensi kepemimpinan komunikasi yang menonjol.` : `<span class="hl-blue">menunjukkan progres teknis yang positif</span> namun masih memerlukan penguatan pada detail perilaku tertentu.`;
-            
-            return `<strong>Kesimpulan Strategis:</strong> Secara keseluruhan, performa ${n} pada bulan ini ${summary} Integrasi catatan instruktur: "${raw}". Kami <span class="hl-yellow">merekomendasikan ${n} untuk mempertahankan konsistensi kelas</span> guna mentransformasi bakat bicaranya menjadi keterampilan profesional yang utuh di masa depan.`;
-        }
-
         // --- UTILS ---
         function resetForm() {
             if (confirm("Reset seluruh data input?")) location.reload();
@@ -391,12 +316,20 @@
         function downloadPDF() {
             const element = document.getElementById('report-content');
             const opt = {
-                margin: 0.2,
+                margin: [0.2, 0.2, 0.2, 0.2], // Standard margins
                 filename: `Report_YEC_${state.namaPanggilan || 'Siswa'}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    letterRendering: true,
+                    scrollY: 0
+                },
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
+            
+            // Scroll to top before generating to avoid offset issues
+            window.scrollTo(0,0);
             html2pdf().set(opt).from(element).save();
         }
 
