@@ -42,8 +42,8 @@
         }
 
         #report-content {
-            width: 800px; 
-            min-height: 1120px; /* Standar A4 ratio */
+            width: 794px; /* Lebar A4 standar pada 96 DPI */
+            min-height: 1123px; /* Tinggi A4 standar */
             background: white;
             flex-shrink: 0;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -154,7 +154,7 @@
                         <h1 class="text-3xl md:text-4xl font-black mb-3 tracking-tight uppercase drop-shadow-lg font-fun text-white">Monthly Observation Report</h1>
                         <div class="inline-flex items-center gap-4 px-6 py-2 bg-black/10 backdrop-blur-md rounded-full border border-white/20 font-fun text-white">
                             <div class="w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
-                            <span class="tracking-[0.3em] uppercase text-[10px] font-bold">Public Speaking Anak Reguler</span>
+                            <span class="tracking-[0.3em] uppercase text-[10px] font-bold text-white">Public Speaking Anak Reguler</span>
                         </div>
                     </div>
 
@@ -167,12 +167,12 @@
                             </div>
                             <div class="w-px h-12 bg-slate-100 mx-6"></div>
                             <div class="flex-1 text-center">
-                                <p class="text-[9px] text-indigo-400 uppercase font-black tracking-[0.3em] mb-1">Nama Panggilan</p>
+                                <p class="text-[9px] text-indigo-400 uppercase font-black tracking-[0.3em] mb-1 text-indigo-400">Nama Panggilan</p>
                                 <p id="view-namaPanggilan" class="text-3xl font-black text-orange-500 tracking-tight leading-none">—</p>
                             </div>
                             <div class="w-px h-12 bg-slate-100 mx-6"></div>
                             <div class="flex-1 text-right">
-                                <p class="text-[9px] text-teal-500 uppercase font-black tracking-[0.3em] mb-1">Skor Akhir</p>
+                                <p class="text-[9px] text-teal-500 uppercase font-black tracking-[0.3em] mb-1 text-teal-500">Skor Akhir</p>
                                 <div class="flex items-baseline justify-end">
                                     <span id="view-nilaiAkhir" class="text-5xl font-black text-indigo-950 leading-none">0</span>
                                     <span class="text-lg font-bold text-slate-300 ml-1">/100</span>
@@ -221,7 +221,7 @@
                             <div class="text-center min-w-[200px]">
                                 <div class="w-full h-px bg-slate-200 mb-4"></div>
                                 <p class="text-[11px] font-black text-slate-800 uppercase tracking-widest font-fun">Instruktur Utama</p>
-                                <p class="text-[9px] text-indigo-500 mt-1 font-black">YEC PROFESSIONAL EDUCATION</p>
+                                <p class="text-[9px] text-indigo-500 mt-1 font-black text-indigo-500">YEC PROFESSIONAL EDUCATION</p>
                             </div>
                         </div>
                     </div>
@@ -297,7 +297,7 @@
             let text = state.rawNotes.trim();
 
             if (!text) {
-                container.innerHTML = '<p class="italic text-indigo-300/50 text-center py-10">Catatan mentor akan tertulis di sini.</p>';
+                container.innerHTML = '<p class="italic text-slate-300 text-center py-10">Catatan mentor akan tertulis di sini.</p>';
                 return;
             }
 
@@ -354,8 +354,9 @@
         function downloadPDF() {
             const element = document.getElementById('report-content');
             
+            // Konfigurasi PDF yang jauh lebih stabil
             const opt = {
-                margin: [10, 0, 10, 0], // Margin atas/bawah dalam mm (sedikit ruang napas)
+                margin: 0,
                 filename: `Report_YEC_${state.namaPanggilan || 'Student'}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { 
@@ -363,17 +364,15 @@
                     useCORS: true, 
                     letterRendering: true, 
                     scrollY: 0,
-                    width: 800 
+                    width: 794 // Pas dengan lebar A4 pada 96 DPI
                 },
                 jsPDF: { 
-                    unit: 'mm', 
+                    unit: 'pt', // Menggunakan point untuk stabilitas render HTML ke PDF
                     format: 'a4', 
-                    orientation: 'portrait',
-                    compress: true
+                    orientation: 'portrait'
                 },
                 pagebreak: { 
-                    mode: ['avoid-all', 'css', 'legacy'],
-                    before: '.prevent-split'
+                    mode: ['avoid-all', 'css', 'legacy']
                 }
             };
             
