@@ -57,7 +57,7 @@
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; padding: 0; }
-            #report-content { box-shadow: none !important; border: none !important; margin: 0 !important; width: 100% !important; }
+            #report-content { box-shadow: none !important; border: none !important; width: 100% !important; margin: 0 !important; }
             .preview-area { padding: 0; background: white; }
         }
 
@@ -141,11 +141,9 @@
         <div class="flex-1 preview-area no-scrollbar relative">
             
             <div class="fixed bottom-8 right-8 z-50 no-print flex gap-3">
-                <button onclick="window.print()" class="bg-white text-slate-600 p-4 rounded-2xl shadow-xl hover:bg-slate-50 transition-all border border-slate-200">
+                <button onclick="window.print()" class="bg-indigo-600 text-white p-4 rounded-2xl shadow-xl hover:bg-indigo-700 transition-all border border-indigo-500 flex items-center gap-2 font-bold px-6">
                     <i data-lucide="printer" class="w-6 h-6"></i>
-                </button>
-                <button onclick="downloadPDF()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl shadow-2xl transition-all flex items-center gap-3 font-bold text-sm tracking-wide">
-                    <i data-lucide="file-down" class="w-6 h-6"></i> Simpan Laporan
+                    <span>Cetak Laporan</span>
                 </button>
             </div>
 
@@ -200,10 +198,11 @@
 
                     <!-- Observation Narrative -->
                     <div class="px-14 pb-24 flex-grow">
-                        <div class="bg-slate-50/50 border border-slate-200 rounded-[3rem] p-12 relative">
-                            <div class="flex items-center gap-3 mb-8 prevent-split">
-                                <div class="h-6 w-1.5 bg-indigo-600 rounded-full"></div>
-                                <h2 class="text-[22px] font-black text-slate-800 uppercase tracking-tighter">Catatan Observasi</h2>
+                        <div class="bg-slate-50/50 border border-slate-200 rounded-[3rem] p-12 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -mr-10 -mt-10 opacity-60"></div>
+                            <div class="flex items-center gap-4 mb-8 prevent-split">
+                                <div class="h-8 w-2 bg-teal-400 rounded-full shadow-sm"></div>
+                                <h2 class="text-[22px] font-black text-indigo-950 uppercase tracking-tighter font-fun">Catatan Observasi</h2>
                             </div>
                             <div id="view-notes" class="observation-container relative z-10">
                                 <p class="italic text-slate-300 text-center py-6">Hasil observasi mentor akan tampil secara profesional di sini.</p>
@@ -292,7 +291,7 @@
             // 2. Bold Pattern (**text**)
             proc = proc.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-            // 3. Automatic Keyword Highlighting (Optional but very helpful)
+            // 3. Automatic Keyword Highlighting
             const autoRules = [
                 { reg: /\b(bagus|baik|unggul|hebat|luar biasa|percaya diri|jernih|stabil|tepat|natural|lancar|berani)\b/gi, class: 'hl-green' },
                 { reg: /\b(kurang|belum|perlu|lambat|cepat|lemah|tidak stabil|fidgeting|gelisah|malu|ragu)\b/gi, class: 'hl-red' },
@@ -301,7 +300,6 @@
             ];
 
             autoRules.forEach(rule => {
-                // We only auto-highlight if it's NOT already inside a tag
                 proc = proc.replace(rule.reg, (match) => {
                     return `<span class="${rule.class}">${match}</span>`;
                 });
@@ -334,38 +332,6 @@
 
         function resetForm() {
             if (confirm("Reset seluruh data input?")) location.reload();
-        }
-
-        function downloadPDF() {
-            const element = document.getElementById('report-content');
-            const np = document.getElementById('namaPanggilan').value || 'Student';
-            
-            // Fix: Reset scroll to top before capture to avoid shifts
-            window.scrollTo(0,0);
-
-            const opt = {
-                margin: 0,
-                filename: `Report_YEC_${np}.pdf`,
-                image: { type: 'jpeg', quality: 1.0 },
-                html2canvas: { 
-                    scale: 2, 
-                    useCORS: true, 
-                    letterRendering: true, 
-                    scrollY: 0,
-                    scrollX: 0,
-                    windowWidth: 800, // Fixed render width
-                    width: 794 // Capture exact element width
-                },
-                jsPDF: { 
-                    unit: 'pt', 
-                    format: 'a4', 
-                    orientation: 'portrait',
-                    compress: true
-                },
-                pagebreak: { mode: ['css', 'legacy'], avoid: '.prevent-split' }
-            };
-            
-            html2pdf().set(opt).from(element).save();
         }
 
         window.onload = () => { 
