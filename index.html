@@ -57,7 +57,7 @@
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; padding: 0; }
-            #report-content { box-shadow: none !important; border: none !important; width: 100% !important; margin: 0 !important; }
+            #report-content { box-shadow: none !important; border: none !important; margin: 0 !important; width: 100% !important; }
             .preview-area { padding: 0; background: white; }
         }
 
@@ -166,7 +166,7 @@
 
                     <!-- Profile Banner -->
                     <div class="px-14 -mt-8 prevent-split">
-                        <div class="bg-white rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] p-10 flex items-center justify-between border border-slate-50">
+                        <div class="bg-white rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] p-10 flex items-center justify-between border border-slate-100">
                             <div class="w-[35%]">
                                 <p class="text-[8.5px] text-slate-400 uppercase font-black tracking-[0.2em] mb-1">Nama Lengkap</p>
                                 <p id="view-namaLengkap" class="text-[20px] font-bold text-slate-800 break-words leading-tight">—</p>
@@ -174,7 +174,7 @@
                             <div class="w-px h-14 bg-slate-100 mx-4"></div>
                             <div class="flex-1 text-center">
                                 <p class="text-[8.5px] text-indigo-400 uppercase font-black tracking-[0.2em] mb-1">Nama Panggilan</p>
-                                <p id="view-namaPanggilan" class="text-[34px] font-black text-indigo-600 tracking-tight leading-none">—</p>
+                                <p id="view-namaPanggilan" class="text-[34px] font-black text-indigo-600 tracking-tight leading-none uppercase">—</p>
                             </div>
                             <div class="w-px h-14 bg-slate-100 mx-4"></div>
                             <div class="w-[20%] text-right">
@@ -340,6 +340,9 @@
             const element = document.getElementById('report-content');
             const np = document.getElementById('namaPanggilan').value || 'Student';
             
+            // Fix: Reset scroll to top before capture to avoid shifts
+            window.scrollTo(0,0);
+
             const opt = {
                 margin: 0,
                 filename: `Report_YEC_${np}.pdf`,
@@ -349,7 +352,9 @@
                     useCORS: true, 
                     letterRendering: true, 
                     scrollY: 0,
-                    windowWidth: 800 
+                    scrollX: 0,
+                    windowWidth: 800, // Fixed render width
+                    width: 794 // Capture exact element width
                 },
                 jsPDF: { 
                     unit: 'pt', 
@@ -360,7 +365,6 @@
                 pagebreak: { mode: ['css', 'legacy'], avoid: '.prevent-split' }
             };
             
-            window.scrollTo(0,0);
             html2pdf().set(opt).from(element).save();
         }
 
