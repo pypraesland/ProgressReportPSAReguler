@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YEC Report Generator - Luminous Elegant Edition</title>
+    <title>YEC Monthly Observation Report - Luminous Edition</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -13,28 +13,20 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Quicksand:wght@600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --color-vokal: #6366f1;
-            --color-respon: #0ea5e9;
-            --color-tubuh: #f43f5e;
-            --color-sosial: #10b981;
-            --color-mental: #f59e0b;
-        }
-
         body { 
             font-family: 'Inter', sans-serif; 
-            background: #f8fafc; 
+            background: #f1f5f9; 
             color: #334155;
         }
         
         h1, h2, .font-fun { font-family: 'Quicksand', sans-serif; }
         .serif { font-family: 'Playfair Display', serif; }
         
-        /* Highlight Stabilo Styles - Sophisticated & Bright */
-        .hl-green { background-color: #dcfce7; color: #15803d; padding: 2px 5px; border-radius: 4px; font-weight: 600; }
-        .hl-yellow { background-color: #fef9c3; color: #a16207; padding: 2px 5px; border-radius: 4px; font-weight: 600; }
-        .hl-blue { background-color: #e0f2fe; color: #0369a1; padding: 2px 5px; border-radius: 4px; font-weight: 600; }
-        .hl-red { background-color: #fee2e2; color: #b91c1c; padding: 2px 5px; border-radius: 4px; font-weight: 600; }
+        /* Highlight Stabilo Styles - Bold & Vibrant */
+        .hl-green { background-color: #dcfce7; color: #15803d; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+        .hl-yellow { background-color: #fef9c3; color: #a16207; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+        .hl-blue { background-color: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+        .hl-red { background-color: #fee2e2; color: #b91c1c; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
         
         strong { font-weight: 700; color: #1e293b; }
         
@@ -53,7 +45,7 @@
 
         #report-content {
             width: 794px; /* A4 width in 96dpi */
-            min-height: 1123px;
+            min-height: auto;
             background: white;
             flex-shrink: 0;
             display: flex;
@@ -69,7 +61,7 @@
             .preview-area { padding: 0; background: white; }
         }
 
-        /* Input Controls */
+        /* Input Card Layout */
         .input-card {
             background: white;
             border: 1px solid #e2e8f0;
@@ -83,9 +75,9 @@
 
         .observation-container {
             text-align: justify;
-            line-height: 2;
+            line-height: 2.1;
             white-space: pre-line;
-            font-size: 15px;
+            font-size: 15.5px;
             color: #475569;
         }
 
@@ -95,7 +87,7 @@
             border-radius: 99px;
             background: #f1f5f9;
             flex: 1;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.5s ease;
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -130,12 +122,18 @@
 
             <div class="input-card">
                 <h2 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Capaian Kompetensi</h2>
-                <div id="skor-container" class="space-y-5"></div>
+                <div id="skor-container" class="space-y-5">
+                    <!-- Dinamis Rendered by JS -->
+                </div>
             </div>
 
             <div class="input-card">
-                <h2 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Narasi Mentor</h2>
-                <textarea id="rawNotes" oninput="updatePreview()" class="w-full px-4 py-4 bg-slate-50 border border-slate-200 focus:border-indigo-400 rounded-xl text-sm outline-none h-40 resize-none leading-relaxed" placeholder="Tulis catatan perkembangan..."></textarea>
+                <h2 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Narasi Mentor</h2>
+                <p class="text-[9px] text-slate-400 mb-3 leading-tight italic">
+                    Tip: Gunakan **Teks** untuk tebal. <br>
+                    Gunakan [g]Hijau[/g], [y]Kuning[/y], [b]Biru[/b], [r]Merah[/r] untuk highlight.
+                </p>
+                <textarea id="rawNotes" oninput="updatePreview()" class="w-full px-4 py-4 bg-slate-50 border border-slate-200 focus:border-indigo-400 rounded-xl text-sm outline-none h-48 resize-none leading-relaxed" placeholder="Tulis catatan perkembangan..."></textarea>
             </div>
         </div>
 
@@ -154,36 +152,36 @@
             <div id="report-content" class="flex flex-col">
                 
                 <div class="relative z-10 flex flex-col flex-grow">
-                    <!-- Elegant Luminous Header -->
-                    <div class="bg-white border-b-4 border-indigo-600 p-16 text-center relative overflow-hidden prevent-split">
+                    <!-- Elegant Header -->
+                    <div class="bg-white border-b-8 border-indigo-600 p-16 text-center relative overflow-hidden prevent-split">
                         <div class="absolute inset-0 opacity-40">
                             <div class="absolute top-0 right-0 w-80 h-80 bg-indigo-50 rounded-full blur-[80px] -mr-40 -mt-40"></div>
                             <div class="absolute bottom-0 left-0 w-80 h-80 bg-rose-50 rounded-full blur-[80px] -ml-40 -mb-40"></div>
                         </div>
-                        <h1 class="serif text-4xl font-extrabold mb-3 tracking-tight text-slate-800 uppercase">Monthly Observation Report</h1>
-                        <div class="inline-flex items-center gap-4 px-6 py-2 bg-slate-50 rounded-full border border-slate-200 shadow-sm">
-                            <span class="tracking-[0.4em] uppercase text-[10px] font-black text-indigo-600">Public Speaking Anak Reguler</span>
+                        <h1 class="serif text-[38px] font-extrabold mb-3 tracking-tight text-slate-800 uppercase leading-none">Monthly Observation Report</h1>
+                        <div class="inline-flex items-center gap-4 px-6 py-2 bg-slate-50 rounded-full border border-slate-200 shadow-sm mt-4">
+                            <span class="tracking-[0.45em] uppercase text-[10px] font-black text-indigo-600">Public Speaking Anak Reguler</span>
                         </div>
                     </div>
 
                     <!-- Profile Banner -->
                     <div class="px-14 -mt-8 prevent-split">
-                        <div class="bg-white rounded-3xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.1)] p-10 flex items-center justify-between border border-slate-100">
+                        <div class="bg-white rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] p-10 flex items-center justify-between border border-slate-50">
                             <div class="w-[35%]">
-                                <p class="text-[8px] text-slate-400 uppercase font-black tracking-[0.2em] mb-1">Nama Lengkap Siswa</p>
-                                <p id="view-namaLengkap" class="text-xl font-bold text-slate-800 break-words">—</p>
+                                <p class="text-[8.5px] text-slate-400 uppercase font-black tracking-[0.2em] mb-1">Nama Lengkap</p>
+                                <p id="view-namaLengkap" class="text-[20px] font-bold text-slate-800 break-words leading-tight">—</p>
                             </div>
-                            <div class="w-px h-12 bg-slate-100 mx-4"></div>
+                            <div class="w-px h-14 bg-slate-100 mx-4"></div>
                             <div class="flex-1 text-center">
-                                <p class="text-[8px] text-indigo-400 uppercase font-black tracking-[0.2em] mb-1">Nama Panggilan</p>
-                                <p id="view-namaPanggilan" class="text-3xl font-black text-indigo-600 tracking-tight leading-none uppercase">—</p>
+                                <p class="text-[8.5px] text-indigo-400 uppercase font-black tracking-[0.2em] mb-1">Nama Panggilan</p>
+                                <p id="view-namaPanggilan" class="text-[34px] font-black text-indigo-600 tracking-tight leading-none">—</p>
                             </div>
-                            <div class="w-px h-12 bg-slate-100 mx-4"></div>
+                            <div class="w-px h-14 bg-slate-100 mx-4"></div>
                             <div class="w-[20%] text-right">
-                                <p class="text-[8px] text-rose-500 uppercase font-black tracking-[0.2em] mb-1">Nilai Akhir</p>
+                                <p class="text-[8.5px] text-rose-500 uppercase font-black tracking-[0.2em] mb-1">Skor</p>
                                 <div class="flex items-baseline justify-end">
-                                    <span id="view-nilaiAkhir" class="text-5xl font-black text-slate-900 leading-none">0</span>
-                                    <span class="text-sm font-bold text-slate-300 ml-1">/100</span>
+                                    <span id="view-nilaiAkhir" class="text-[52px] font-black text-slate-900 leading-none">0</span>
+                                    <span class="text-lg font-bold text-slate-300 ml-1">/100</span>
                                 </div>
                             </div>
                         </div>
@@ -191,21 +189,21 @@
 
                     <!-- Competency Matrix -->
                     <div class="p-14 pb-8 prevent-split">
-                        <div class="flex items-center gap-3 mb-12">
+                        <div class="flex items-center gap-3 mb-10">
                             <div class="h-6 w-1.5 bg-indigo-600 rounded-full shadow-sm"></div>
-                            <h2 class="text-xl font-black text-slate-800 uppercase tracking-tighter">Matriks Capaian Kompetensi</h2>
+                            <h2 class="text-[22px] font-black text-slate-800 uppercase tracking-tighter">Matriks Capaian Kompetensi</h2>
                         </div>
                         <div id="progress-visuals" class="grid grid-cols-2 gap-x-16 gap-y-12">
-                            <!-- Dinamis -->
+                            <!-- Dinamis JS -->
                         </div>
                     </div>
 
-                    <!-- Observation Narrative - Clean White -->
-                    <div class="px-14 pb-20 flex-grow">
-                        <div class="bg-slate-50/50 border border-slate-200 rounded-[2.5rem] p-12 relative">
+                    <!-- Observation Narrative -->
+                    <div class="px-14 pb-24 flex-grow">
+                        <div class="bg-slate-50/50 border border-slate-200 rounded-[3rem] p-12 relative">
                             <div class="flex items-center gap-3 mb-8 prevent-split">
-                                <div class="h-6 w-1.5 bg-rose-500 rounded-full"></div>
-                                <h2 class="text-xl font-black text-slate-800 uppercase tracking-tighter">Catatan Observasi</h2>
+                                <div class="h-6 w-1.5 bg-indigo-600 rounded-full"></div>
+                                <h2 class="text-[22px] font-black text-slate-800 uppercase tracking-tighter">Catatan Observasi</h2>
                             </div>
                             <div id="view-notes" class="observation-container relative z-10">
                                 <p class="italic text-slate-300 text-center py-6">Hasil observasi mentor akan tampil secara profesional di sini.</p>
@@ -220,20 +218,26 @@
 
     <script>
         // --- DATA & CONFIG ---
-        let state = {
-            namaLengkap: '', namaPanggilan: '', nilaiAkhir: '', rawNotes: '',
-            skor: { vokal: 3, respon: 3, tubuh: 3, sosial: 2, mental: 3 }
+        const state = {
+            skor: { artikulasi: 3, engagement: 3, ekspresi: 3, inklusivitas: 2, kecemasan: 3 }
         };
 
         const config = {
-            vokal: { label: "Artikulasi & Vokal", color: "var(--color-vokal)" },
-            respon: { label: "Interaksi & Respons", color: "var(--color-respon)" },
-            tubuh: { label: "Ekspresi & Gesture", color: "var(--color-tubuh)" },
-            sosial: { label: "Dinamika Sosial", color: "var(--color-sosial)" },
-            mental: { label: "Kontrol Kecemasan", color: "var(--color-mental)" }
+            artikulasi: { label: "Artikulasi & Proyeksi Suara" },
+            engagement: { label: "Interaksi & Respons (Engagement)" },
+            ekspresi: { label: "Ekspresi & Penguasaan Ruang" },
+            inklusivitas: { label: "Inklusivitas & Kontrol Kelompok" },
+            kecemasan: { label: "Manajemen Kecemasan" }
         };
 
-        // --- UI LOGIC ---
+        const levelColors = {
+            1: '#ef4444', // Red
+            2: '#eab308', // Yellow
+            3: '#22c55e', // Green
+            4: '#3b82f6'  // Blue
+        };
+
+        // --- UI CORE ---
         function renderInputs() {
             const container = document.getElementById('skor-container');
             container.innerHTML = Object.entries(config).map(([key, item]) => `
@@ -251,64 +255,76 @@
         function setSkor(aspek, val) {
             state.skor[aspek] = val;
             renderInputs();
-            updateVisuals();
+            updatePreview();
         }
 
         function updatePreview() {
-            state.namaLengkap = document.getElementById('namaLengkap').value;
-            state.namaPanggilan = document.getElementById('namaPanggilan').value;
-            state.nilaiAkhir = document.getElementById('nilaiAkhir').value;
-            state.rawNotes = document.getElementById('rawNotes').value;
+            const nl = document.getElementById('namaLengkap').value;
+            const np = document.getElementById('namaPanggilan').value;
+            const na = document.getElementById('nilaiAkhir').value;
+            const rn = document.getElementById('rawNotes').value;
 
-            document.getElementById('view-namaLengkap').innerText = state.namaLengkap || "—";
-            document.getElementById('view-namaPanggilan').innerText = state.namaPanggilan || "—";
-            document.getElementById('view-nilaiAkhir').innerText = state.nilaiAkhir || "0";
+            document.getElementById('view-namaLengkap').innerText = nl || "—";
+            document.getElementById('view-namaPanggilan').innerText = np || "—";
+            document.getElementById('view-nilaiAkhir').innerText = na || "0";
             
-            processNotesDisplay();
+            // Render and process notes
+            const notesView = document.getElementById('view-notes');
+            if (rn.trim() === "") {
+                notesView.innerHTML = '<p class="italic text-slate-300 text-center py-6">Hasil observasi mentor akan tampil secara profesional di sini.</p>';
+            } else {
+                notesView.innerHTML = formatNotes(rn);
+            }
+            
             updateVisuals();
         }
 
-        function processNotesDisplay() {
-            const container = document.getElementById('view-notes');
-            let text = state.rawNotes.trim();
+        // Processing Logic for Highlights and Bold
+        function formatNotes(text) {
+            let proc = text;
 
-            if (!text) {
-                container.innerHTML = '<p class="italic text-slate-300 text-center py-6">Hasil observasi mentor akan tampil secara profesional di sini.</p>';
-                return;
-            }
+            // 1. Manual Tags Replacement (Custom [tag])
+            proc = proc.replace(/\[g\](.*?)\[\/g\]/gi, '<span class="hl-green">$1</span>');
+            proc = proc.replace(/\[y\](.*?)\[\/y\]/gi, '<span class="hl-yellow">$1</span>');
+            proc = proc.replace(/\[b\](.*?)\[\/b\]/gi, '<span class="hl-blue">$1</span>');
+            proc = proc.replace(/\[r\](.*?)\[\/r\]/gi, '<span class="hl-red">$1</span>');
 
-            const rules = [
+            // 2. Bold Pattern (**text**)
+            proc = proc.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+            // 3. Automatic Keyword Highlighting (Optional but very helpful)
+            const autoRules = [
                 { reg: /\b(bagus|baik|unggul|hebat|luar biasa|percaya diri|jernih|stabil|tepat|natural|lancar|berani)\b/gi, class: 'hl-green' },
                 { reg: /\b(kurang|belum|perlu|lambat|cepat|lemah|tidak stabil|fidgeting|gelisah|malu|ragu)\b/gi, class: 'hl-red' },
                 { reg: /\b(progres|kemajuan|berkembang|meningkat|mulai|upaya|aktif)\b/gi, class: 'hl-blue' },
                 { reg: /\b(latihan|fokus|perhatian|rekomendasi|saran|lanjutkan|rutin|disarankan)\b/gi, class: 'hl-yellow' }
             ];
 
-            let html = text.split('\n').map(p => {
-                if (!p.trim()) return '';
-                let proc = p;
-                proc = proc.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
-                rules.forEach(rule => { proc = proc.replace(rule.reg, `<span class="${rule.class}">$1</span>`); });
-                return `<p class="mb-4">${proc}</p>`;
-            }).join('');
+            autoRules.forEach(rule => {
+                // We only auto-highlight if it's NOT already inside a tag
+                proc = proc.replace(rule.reg, (match) => {
+                    return `<span class="${rule.class}">${match}</span>`;
+                });
+            });
 
-            container.innerHTML = html;
+            return proc;
         }
 
         function updateVisuals() {
             const container = document.getElementById('progress-visuals');
             container.innerHTML = Object.entries(config).map(([key, item]) => {
                 const val = state.skor[key];
+                const activeColor = levelColors[val];
                 return `
                     <div class="prevent-split">
                         <div class="flex justify-between mb-3 items-end">
-                            <span class="text-[11px] font-black text-slate-500 uppercase tracking-widest leading-none">${item.label}</span>
-                            <span class="text-[9px] font-bold text-slate-400">Level ${val}/4</span>
+                            <span class="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-none">${item.label}</span>
+                            <span class="text-[9px] font-bold" style="color: ${activeColor}">Level ${val}/4</span>
                         </div>
                         <div class="flex items-center gap-1.5">
                             ${[1, 2, 3, 4].map(i => {
                                 const isActive = i <= val;
-                                return `<div class="segment-cap" style="${isActive ? 'background-color:' + item.color + '; box-shadow: 0 4px 12px -2px ' + item.color + '44;' : ''}"></div>`;
+                                return `<div class="segment-cap" style="${isActive ? `background-color: ${activeColor}; box-shadow: 0 4px 12px -2px ${activeColor}44;` : ''}"></div>`;
                             }).join('')}
                         </div>
                     </div>
@@ -317,24 +333,42 @@
         }
 
         function resetForm() {
-            if (confirm("Hapus semua data input?")) location.reload();
+            if (confirm("Reset seluruh data input?")) location.reload();
         }
 
         function downloadPDF() {
             const element = document.getElementById('report-content');
+            const np = document.getElementById('namaPanggilan').value || 'Student';
+            
             const opt = {
                 margin: 0,
-                filename: `Report_YEC_${state.namaPanggilan || 'Student'}.pdf`,
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollY: 0, width: 794 },
-                jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                filename: `Report_YEC_${np}.pdf`,
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    letterRendering: true, 
+                    scrollY: 0,
+                    windowWidth: 800 
+                },
+                jsPDF: { 
+                    unit: 'pt', 
+                    format: 'a4', 
+                    orientation: 'portrait',
+                    compress: true
+                },
+                pagebreak: { mode: ['css', 'legacy'], avoid: '.prevent-split' }
             };
+            
             window.scrollTo(0,0);
             html2pdf().set(opt).from(element).save();
         }
 
-        window.onload = () => { lucide.createIcons(); renderInputs(); updatePreview(); };
+        window.onload = () => { 
+            lucide.createIcons(); 
+            renderInputs(); 
+            updatePreview(); 
+        };
     </script>
 </body>
 </html>
